@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - '27017:27017'
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    environment:
+      MONGO_URI: mongodb://root:password@mongodb:27017/tareas?authSource=admin
+    depends_on:
+      - mongodb
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./backend:/app
+    command: npm run dev # Solo se usará cuando decidas levantar el backend en Docker
+  
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - '3000:80'
+    volumes:
+      - ./client:/app
+    command: npm start # Solo se usará cuando decidas levantar el frontend en Docker
+
+volumes:
+  mongo-data:
+    driver: local
