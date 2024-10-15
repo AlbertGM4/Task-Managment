@@ -1,23 +1,15 @@
-import { Link } from "@remix-run/react";
+// src/routes/tasks.tsx
+import React from 'react';
+import TaskList from '../components/tasks/taskList';
 
-export default function Tasks() {
-    const tasks = [
-        { id: 1, title: "Primera tarea" },
-        { id: 2, title: "Segunda tarea" },
-    ];
 
+const TasksPage: React.FC = () => {
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold">Tareas</h1>
-            <ul>
-                {tasks.map((task) => (
-                    <li key={task.id}>
-                        <Link to={`/tasks/${task.id}`} className="text-blue-500">
-                            {task.title}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
+        <div className="container mx-auto p-4">
+            <h1 className="text-3xl font-bold mb-4">Lista de Tareas</h1>
+            <TaskList />
         </div>
     );
-}
+};
+
+export default TasksPage;

@@ -6,9 +6,12 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import "./tailwind.css";
-import styles from "./styles/global.css";
+//import styles from "./styles/global.css";
+import Nav from "./components/nav"; // Importamos el componente de navegación
+
 
 import type { LinksFunction } from "@remix-run/node";
+import { TaskProvider } from "./contexts/taskContext";
 
 
 export const links: LinksFunction = () => [
@@ -18,27 +21,30 @@ export const links: LinksFunction = () => [
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
-  {
+  /* {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
+    href: styles,
+  }, */
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
+    <TaskProvider>
+      <html lang="en">
+        <head>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <Meta />
+          <Links />
+        </head>
+        <body>
+          <Nav />
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </body>
+      </html>
+    </TaskProvider>
   );
 }
 
