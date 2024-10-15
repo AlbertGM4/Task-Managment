@@ -1,26 +1,20 @@
-# Etapa 1: Compilar TypeScript
-FROM node:18-alpine AS build
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY tsconfig.json ./
-COPY src ./src
-
-RUN npm run build
-
-# Etapa 2: Ejecutar la app
+# Usa una imagen base de Node.js
 FROM node:18-alpine
 
+# Establece el directorio de trabajo
 WORKDIR /app
 
-COPY --from=build /app/package*.json ./
-COPY --from=build /app/dist ./dist
+# Copia los archivos de package.json y package-lock.json
+COPY package*.json ./
 
-RUN npm install --only=production
+# Instala las dependencias
+RUN npm install
 
-EXPOSE 5000
+# Copia el resto de los archivos del proyecto
+COPY . .
 
-CMD ["node", "dist/server.js"]
+# Expone el puerto en el que corre la app
+EXPOSE 3000
+
+# Comando para iniciar la aplicación
+CMD ["node", "index.js"]

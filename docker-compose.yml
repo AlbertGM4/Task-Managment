@@ -29,7 +29,7 @@ services:
   
   frontend:
     build:
-      context: ./client
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend
     depends_on:
@@ -37,7 +37,7 @@ services:
     ports:
       - '3000:80'
     volumes:
-      - ./client:/app
+      - ./frontend:/app
     command: npm start # Solo se usará cuando decidas levantar el frontend en Docker
 
 volumes:

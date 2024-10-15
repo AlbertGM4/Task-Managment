@@ -29,8 +29,7 @@ RUN npm install --production --frozen-lockfile
 # Copia los archivos de la etapa de construcción
 COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
-COPY --from=build /app/server.js /app/server.js
-COPY --from=build /app/remix.config.js /app/remix.config.js
+COPY --from=build /app/vite.config.ts /app/vite.config.ts
 
 # Expone el puerto 3000 para que Remix sirva la aplicación
 EXPOSE 3000
