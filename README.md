@@ -93,3 +93,4 @@ Las siguientes son las rutas expuestas por el backend:
 Asegúrate de tener tu base de datos MongoDB corriendo antes de ejecutar el backend.
 Puedes optar por ejecutar MongoDB en un contenedor Docker o conectarte a una instancia local o remota.
 Si necesitas modificar el backend, recuerda compilar los archivos de TypeScript antes de ejecutar el servidor.
+
