@@ -23,10 +23,7 @@ services:
       - mongodb
     ports:
       - '5000:5000'
-    volumes:
-      - ./backend:/app
-    command: npm run dev # Solo se usará cuando decidas levantar el backend en Docker
-  
+
   frontend:
     build:
       context: ./frontend
@@ -36,9 +33,6 @@ services:
       - backend
     ports:
       - '3000:80'
-    volumes:
-      - ./frontend:/app
-    command: npm start # Solo se usará cuando decidas levantar el frontend en Docker
 
 volumes:
   mongo-data:
