@@ -7,7 +7,7 @@ export enum TaskStatus {
 }
 
 export interface Task {
-  id: number;
+  id: string;
   title: string;
   description: string;
   status: TaskStatus;
@@ -17,9 +17,11 @@ export interface Task {
   priority: number; */
 }
 
-export interface TaskContextType {
+export interface TaskListProps {
   tasks: Task[];
-  updateTask: (task: Task) => void;
-  addTask: (task: Task) => void;
-  deleteTask: (id: number) => void;
 }
+
+export type TaskProviderProps = {
+  children: React.ReactNode;
+  initialTasks: Task[];
+};

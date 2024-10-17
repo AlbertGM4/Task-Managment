@@ -12,6 +12,10 @@ import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 
+// Import dotenv para cargar las variables de entorno desde .env
+// import dotenv from "dotenv";
+// dotenv.config({ path: './frontend/.env' }); // Asegúrate de que la ruta sea correcta
+
 const ABORT_DELAY = 5_000;
 
 export default function handleRequest(

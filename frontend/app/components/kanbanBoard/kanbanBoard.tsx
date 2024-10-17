@@ -1,49 +1,23 @@
 // components/kanbanBoard/kanbanBoard.tsx
-import { DragDropContext } from 'react-beautiful-dnd';
 import { useEffect, useState } from 'react';
+import { useFetcher } from '@remix-run/react';
 import { Task, TaskStatus } from '~/models/task';
-import { useAddTask, useDeleteTask, useTask, useUpdateTask } from '~/hooks/useTask';
-import { KanbanColumnScheme, columns as predefinedColumns } from '~/models/kanban';
+import { DragDropContext } from 'react-beautiful-dnd';
+import { useAddTask, useUpdateTask, useDeleteTask } from '~/hooks/useTask';
+import { KanbanBoardProps, KanbanColumnScheme, columns as predefinedColumns } from '~/models/kanban';
 import KanbanColumn from './kanbanColumn';
 
 
-const KanbanBoard = () => {
-    const { tasks } = useTask(); // Usar el hook para obtener las tareas
-    const { updateTaskDetails } = useUpdateTask(); // Usar el hook para actualizar tareas
-    const { addTask } = useAddTask(); // Obtener la función para añadir la tarea desde el hook
-    const { deleteTask } = useDeleteTask(); // Obtener la función para añadir la tarea desde el hook
 
-    // const [isMounted, setIsMounted] = useState(false); // Nueva variable para controlar el montaje del componente
+const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
+    const [columns, setColumns] = useState<Record<TaskStatus, KanbanColumnScheme>>(predefinedColumns);
 
     const filteredTasks = (status: TaskStatus) => {
         return tasks.filter(task => task.status === status);
     };
 
-    // Crear un estado para las columnas utilizando las definiciones predefinidas
-    const [columns, setColumns] = useState<Record<TaskStatus, KanbanColumnScheme>>(() => ({
-        ...predefinedColumns,
-
-        [TaskStatus.TODO]: {
-            ...predefinedColumns[TaskStatus.TODO],
-            tasks: filteredTasks(TaskStatus.TODO),
-        },
-        [TaskStatus.IN_PROGRESS]: {
-            ...predefinedColumns[TaskStatus.IN_PROGRESS],
-            tasks: filteredTasks(TaskStatus.IN_PROGRESS),
-        },
-        [TaskStatus.DONE]: {
-            ...predefinedColumns[TaskStatus.DONE],
-            tasks: filteredTasks(TaskStatus.DONE),
-        },
-    }));
-
     useEffect(() => {
-        // Solo marcamos el componente como montado cuando se hidrata en el cliente
-        /* setIsMounted(true);
-
-        if (isMounted) { */
         setColumns({
-            ...predefinedColumns,
             [TaskStatus.TODO]: {
                 ...predefinedColumns[TaskStatus.TODO],
                 tasks: filteredTasks(TaskStatus.TODO),
@@ -57,10 +31,9 @@ const KanbanBoard = () => {
                 tasks: filteredTasks(TaskStatus.DONE),
             },
         });
-        /* } */
     }, [tasks]);
 
-    const handleDragEnd = (result: { source: any; destination: any; draggableId: any; }) => {
+    const handleDragEnd = async (result: { source: any; destination: any; draggableId: any; }) => {
         console.log("---- handleDragEnd ----");
         const { source, destination, draggableId } = result;
 
@@ -72,61 +45,63 @@ const KanbanBoard = () => {
             return;
         }
 
-        const taskId = parseInt(draggableId, 10);
         const newStatus = destination.droppableId as TaskStatus;
 
-        console.log("TaskID: ", taskId);
+        console.log("TaskID: ", draggableId);
         console.log("NewStatus: ", newStatus);
 
         // Obtener la tarea que se está moviendo
-        const taskToMove = tasks.find(task => task.id === taskId);
-        if (!taskToMove) return; // Asegúrate de que la tarea existe
-
-        // Actualizar el estado de la tarea
-        const updatedTask = { ...taskToMove, status: newStatus }; // Crea una nueva tarea con el nuevo estado
-        updateTaskDetails(updatedTask); // Usa la función para actualizar la tarea
-
-        setColumns(prev => ({
-            ...prev,
-            [source.droppableId]: {
-                ...prev[source.droppableId as TaskStatus],
-                tasks: prev[source.droppableId as TaskStatus].tasks.filter(item => item.id !== taskId), // Eliminar tarea de la columna de origen
-            },
-            [newStatus]: {
-                ...prev[newStatus],
-                tasks: [...prev[newStatus].tasks, tasks.find(task => task.id === taskId)], // Añadir tarea a la nueva columna
-            },
-        }));
+        const taskToUpdate = tasks.find(task => task.id === draggableId);
+        if (taskToUpdate) {
+            await handleUpdateTask({ ...taskToUpdate, status: newStatus });
+        }
     };
 
     // Modificado para recibir una nueva tarea
-    const handleAddTask = (taskData: Task) => {
+    const handleAddTask = async (taskData: Task) => {
         console.log("Creating task:", taskData);
-        addTask(taskData);
-
-        // Aquí puedes actualizar las columnas inmediatamente después de añadir la tarea
-        setColumns(prev => ({
-            ...prev,
-            [taskData.status]: {
-                ...prev[taskData.status],
-                tasks: [...prev[taskData.status].tasks, taskData],
-            },
-        }));
+        fetcher.submit({
+            action: 'add',
+            title: taskData.title,
+            description: taskData.description,
+            status: taskData.status || TaskStatus.TODO
+        }, { method: 'post' });
     };
 
     // Nueva función para manejar la actualización de tareas
-    const handleUpdateTask = (updatedTask: Task) => {
-        console.log("Updating task:", updatedTask);
-        updateTaskDetails(updatedTask);
+    const handleUpdateTask = async (taskToUpdate: Task) => {
+        console.log("Updating task:", taskToUpdate);
+
+        // Optimistic Update: actualizar el estado localmente antes de enviar al backend
+        const updateState = (task: Task) => {
+            setColumns(prev => ({
+                ...prev,
+                [task.status]: {
+                    ...prev[task.status],
+                    tasks: prev[task.status].tasks.map(t => t.id === task.id ? task : t),
+                },
+            }));
+        };
+
+        // Actualiza optimistamente en la UI
+        updateState(taskToUpdate);
+
+        fetcher.submit({
+            action: 'update',
+            id: taskToUpdate.id,
+            title: taskToUpdate.title,
+            description: taskToUpdate.description,
+            status: taskToUpdate.status
+        }, { method: 'post' });
     };
 
-    const handleDeleteTask = (taskId: number) => {
+    const handleDeleteTask = async (taskId: number) => {
         console.log("Deleting task:", taskId);
-        deleteTask(taskId);
+        fetcher.submit({
+            action: 'delete',
+            id: taskId
+        }, { method: 'post' });
     };
-
-    // No renderizamos el componente DragDropContext hasta que esté montado en el cliente
-    /* if (!isMounted) return null; */
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>

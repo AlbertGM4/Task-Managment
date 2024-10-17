@@ -1,12 +1,16 @@
-/* Modelo de Tareas */
-
-
+// models/taskModel.ts
 import mongoose from 'mongoose';
 
+export enum TaskStatus {
+  TODO = 'ToDo',
+  IN_PROGRESS = 'InProgress',
+  DONE = 'Done',
+}
 const taskSchema = new mongoose.Schema({
+  id: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: false },
-  completed: { type: Boolean, default: false },
+  status: { type: String, default: TaskStatus.TODO },
   createdAt: { type: Date, default: Date.now },
 });
 

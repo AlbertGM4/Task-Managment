@@ -1,12 +1,8 @@
 // src/components/TaskList.tsx
-import React from 'react';
-import { useTask } from '../../hooks/useTask'; // Asegúrate de que la ruta es correcta
-import { TaskStatus } from '../../models/task';
+import { TaskListProps, TaskStatus } from '../../models/task';
 
 
-const TaskList: React.FC = () => {
-    const { tasks } = useTask(); // Obtener las tareas del contexto
-    console.log("Tareas en TaskList:", tasks); // Log para depurar
+const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
 
     return (
         <div className="p-4">

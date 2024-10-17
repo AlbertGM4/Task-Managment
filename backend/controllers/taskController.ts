@@ -3,8 +3,20 @@
 import { Request, Response } from 'express';
 import Task from '../models/taskModel';
 
+// Obtener todas las tareas
+export const getTasks = async (req: Request, res: Response) => {
+  try {
+    console.log("---- Dentro back getTasks ----")
+    const tasks = await Task.find();
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener tareas', error });
+  }
+};
+
 // Crear una nueva tarea
 export const createTask = async (req: Request, res: Response) => {
+  console.log("Request:", req);
   const { title, description } = req.body;
   const task = new Task({ title, description });
 
@@ -13,16 +25,6 @@ export const createTask = async (req: Request, res: Response) => {
     res.status(201).json(savedTask);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear la tarea', error });
-  }
-};
-
-// Obtener todas las tareas
-export const getTasks = async (req: Request, res: Response) => {
-  try {
-    const tasks = await Task.find();
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener tareas', error });
   }
 };
 

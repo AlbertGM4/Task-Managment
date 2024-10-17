@@ -1,9 +1,10 @@
 // components/kanbanBoard/kanbanColumn.tsx
-import { Droppable } from 'react-beautiful-dnd';
-import KanbanTask from './kanbanTask';
-import { Task } from '~/models/task';
-import { KanbanColumnProps } from '~/models/kanban';
 import { useState } from 'react';
+import { Task } from '~/models/task';
+import { Droppable } from 'react-beautiful-dnd';
+import { KanbanColumnProps } from '~/models/kanban';
+import KanbanTask from './kanbanTask';
+
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, handleUpdateTask, handleDeleteTask }) => {
     const [isAddingTask, setIsAddingTask] = useState(false);

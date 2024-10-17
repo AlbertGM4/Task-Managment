@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());  // Permitir que Express procese JSON
 
 // Rutas
-app.use('/api/tasks', taskRoutes);
+app.use('', taskRoutes);
 
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI as string)

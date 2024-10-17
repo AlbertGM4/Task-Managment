@@ -12,8 +12,8 @@ import {
 const router = Router();
 
 // Rutas para las tareas
-router.post('/', createTask);          // Crear una nueva tarea
 router.get('/', getTasks);              // Obtener todas las tareas
+router.post('/', createTask);           // Crear una nueva tarea
 router.get('/:id', getTaskById);        // Obtener una tarea por ID
 router.put('/:id', updateTask);         // Actualizar una tarea
 router.delete('/:id', deleteTask);      // Eliminar una tarea

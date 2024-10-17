@@ -1,51 +1,66 @@
 // hooks/useTask.ts
-import { useContext } from 'react';
-import { TaskContext } from '../contexts/taskContext';
 import { Task } from '~/models/task';
+import { createTask, deleteTask, getTasks, updateTask } from '~/services/taskService';
 
 // Hook para utilizar el contexto
-const useTask = () => {
-    const context = useContext(TaskContext);
-    
-    if (!context) {
-        throw new Error('useTask debe ser usado dentro de un TaskProvider');
-    }
-    
-    return context;
-};
+const useTasks = () => {
 
-const useUpdateTask = () => {
-    const { updateTask } = useTask(); // Usar el hook useTask para obtener el contexto
-
-    // Cambia la firma de esta función para aceptar un objeto Task completo
-    const updateTaskDetails = (updatedTask: Task) => {
-        console.log("Actualizando tarea:", updatedTask);
-        updateTask(updatedTask); // Llama a la función del contexto para actualizar la tarea
+    const fetchTasks = async () => {
+      try {
+        const tasks = await getTasks();
+        return tasks;
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        return [];
+      }
     };
 
-    return { updateTaskDetails }; // Cambia el nombre a updateTaskDetails
-};
+    return { fetchTasks };
+  };
 
+// Hook para añadir una tarea
 const useAddTask = () => {
-    const context = useContext(TaskContext); // Acceder al contexto
-    if (!context) {
-        throw new Error("useAddTask debe ser usado dentro de un TaskProvider");
-    }
 
-    const { addTask } = context; // Obtener la función addTask del contexto
+    const addTask = async (newTask: Task) => {
+      try {
+        const createdTask = await createTask(newTask);
+        return createdTask;
+      } catch (error) {
+        console.error("Error adding task:", error);
+      }
+    };
 
-    return { addTask }; // Devolverla para que pueda ser usada
+    return { addTask };
+  };
+
+// Hook para actualizar una tarea
+const useUpdateTask = () => {
+
+    const updateTaskDetails = async (taskToUpdate: Task) => {
+      try {
+        const updated = await updateTask(taskToUpdate);
+        return updated;
+      } catch (error) {
+        console.error("Error updating task:", error);
+      }
+    };
+
+    return { updateTaskDetails };
 };
 
+// Hook para eliminar una tarea
 const useDeleteTask = () => {
-    const context = useContext(TaskContext); // Acceder al contexto
-    if (!context) {
-        throw new Error("useAddTask debe ser usado dentro de un TaskProvider");
-    }
 
-    const { deleteTask } = context; // Obtener la función addTask del contexto
+    const removeTask = async (taskId: number) => {
+      try {
+        await deleteTask(taskId);
+      } catch (error) {
+        console.error("Error deleting task:", error);
+      }
+    };
 
-    return { deleteTask }; // Devolverla para que pueda ser usada
-};
+    return { removeTask };
+  };
 
-export { useTask, useUpdateTask, useAddTask, useDeleteTask };
+export { useTasks, useUpdateTask, useAddTask, useDeleteTask };
+

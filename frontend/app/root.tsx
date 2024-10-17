@@ -5,13 +5,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-import "./tailwind.css";
-//import styles from "./styles/global.css";
-import Nav from "./components/nav"; // Importamos el componente de navegación
-
-
 import type { LinksFunction } from "@remix-run/node";
-import { TaskProvider } from "./contexts/taskContext";
+import Nav from "./components/nav";
+
+import "./tailwind.css";
+import "dotenv/config"
 
 
 export const links: LinksFunction = () => [
@@ -28,8 +26,8 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+
   return (
-    <TaskProvider>
       <html lang="en">
         <head>
           <meta charSet="utf-8" />
@@ -44,7 +42,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <Scripts />
         </body>
       </html>
-    </TaskProvider>
   );
 }
 

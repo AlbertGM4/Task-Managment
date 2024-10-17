@@ -21,7 +21,11 @@ export interface KanbanColumnProps {
     handleDeleteTask: (taskID: number) => void;
 }
 
-// Definir las columnas como un registro, donde cada estado de tarea tiene una columna asociada
+export interface KanbanBoardProps {
+    tasks: Task[];
+    fetcher: any;
+  }
+
 export const columns: Record<TaskStatus, KanbanColumnScheme> = {
     [TaskStatus.TODO]: {
         id: TaskStatus.TODO,

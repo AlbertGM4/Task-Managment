@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Task } from '~/models/task';
 import { Draggable } from 'react-beautiful-dnd';
 import { KanbanTaskProps } from '~/models/kanban';
-import { Task } from '~/models/task';
+import React, { useEffect, useRef, useState } from 'react';
 
 
 const KanbanTask: React.FC<KanbanTaskProps> = ({ task, index, handleUpdateTask, handleDeleteTask }) => {
