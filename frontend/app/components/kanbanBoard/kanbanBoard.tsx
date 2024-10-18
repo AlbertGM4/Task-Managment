@@ -39,7 +39,6 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
 
         if (!destination) return;
 
-        // Si la tarea no cambió de columna, no hacemos nada
         if (source.droppableId === destination.droppableId && source.index === destination.index) {
             console.log("La tarea no se ha movido, regresando...");
             return;
@@ -47,17 +46,12 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
 
         const newStatus = destination.droppableId as TaskStatus;
 
-        console.log("TaskID: ", draggableId);
-        console.log("NewStatus: ", newStatus);
-
-        // Obtener la tarea que se está moviendo
         const taskToUpdate = tasks.find(task => task.id === draggableId);
         if (taskToUpdate) {
             await handleUpdateTask({ ...taskToUpdate, status: newStatus });
         }
     };
 
-    // Modificado para recibir una nueva tarea
     const handleAddTask = async (taskData: Task) => {
         console.log("Creating task:", taskData);
         fetcher.submit({
@@ -68,7 +62,6 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
         }, { method: 'post' });
     };
 
-    // Nueva función para manejar la actualización de tareas
     const handleUpdateTask = async (taskToUpdate: Task) => {
         console.log("Updating task:", taskToUpdate);
 
@@ -83,7 +76,6 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
             }));
         };
 
-        // Actualiza optimistamente en la UI
         updateState(taskToUpdate);
 
         fetcher.submit({

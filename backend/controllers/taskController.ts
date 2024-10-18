@@ -17,9 +17,9 @@ export const getTasks = async (req: Request, res: Response) => {
 // Crear una nueva tarea
 export const createTask = async (req: Request, res: Response) => {
   console.log("---- Dentro back createTask ----\n")
-  console.log("Request: \n", req.body);
   const { id, title, description, status } = req.body;
-  const task = new Task({ id, title, description, status });
+
+  const task = new Task({ _id: id, title, description, status });
   console.log("Task en back: ", task);
   try {
     const savedTask = await task.save();
@@ -31,6 +31,7 @@ export const createTask = async (req: Request, res: Response) => {
 
 // Obtener una tarea por ID
 export const getTaskById = async (req: Request, res: Response) => {
+  console.log("---- Dentro back getTaskById ----\n")
   const { id } = req.params;
 
   try {
@@ -47,26 +48,36 @@ export const getTaskById = async (req: Request, res: Response) => {
 
 // Actualizar una tarea
 export const updateTask = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  console.log("---- Dentro back updateTask ----\n")
+  const { id, ...taskData } = req.body;
+  const _id = id;
 
   try {
-    const updatedTask = await Task.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedTask = await Task.findByIdAndUpdate(
+      _id,
+      taskData,
+      { new: true }
+    );
+
     if (updatedTask) {
       res.json(updatedTask);
     } else {
       res.status(404).json({ message: 'Tarea no encontrada' });
     }
   } catch (error) {
+    console.log("Ha dado error")
     res.status(500).json({ message: 'Error al actualizar la tarea', error });
   }
 };
 
 // Eliminar una tarea
 export const deleteTask = async (req: Request, res: Response) => {
+  console.log("---- Dentro back deleteTask ----\n")
   const { id } = req.params;
-
+  const _id = id
+  
   try {
-    const deletedTask = await Task.findByIdAndDelete(id);
+    const deletedTask = await Task.findByIdAndDelete(_id);
     if (deletedTask) {
       res.json({ message: 'Tarea eliminada' });
     } else {

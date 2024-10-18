@@ -4,20 +4,25 @@ import { Task } from '../models/task';
 
 // Esta variable solo existe en el servidor
 const apiUrl = process.env.API_URL as string;
-console.log("API: ", process.env);
 if (!apiUrl) {
   throw new Error('API_URL is not defined. Make sure it is available in your environment.');
 }
 
 // Obtener tareas desde el servidor
 export async function getTasks(): Promise<Task[]> {
+    console.log("---- Obteniendo tareas ----");
     try {
-        console.log("---- Obteniendo tareas ----");
         const response = await fetch(apiUrl);
         if (!response.ok) {
             throw new Error('Error al obtener las tareas');
         }
-        const tasks: Task[] = await response.json();
+        const tasksFromBackend = await response.json();
+        const tasks: Task[] = tasksFromBackend.map((task: any) => ({
+            id: task._id,
+            title: task.title,
+            description: task.description,
+            status: task.status,
+        }));
         console.log("Tareas obtenidas desde el servicio:", tasks);
         return tasks;
     } catch (error) {
@@ -28,16 +33,16 @@ export async function getTasks(): Promise<Task[]> {
 
 // Función para crear una nueva tarea en el "backend"
 export async function createTask(newTask: Task): Promise<Task> {
+    console.log("---- Creando Tarea ----\n");
     try {
-        console.log("---- Creando Tarea ----\n");
-        console.log("Tarea: ", JSON.stringify(newTask));
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Agrega este encabezado
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(newTask),
         });
+        console.log("Respuesta crear back: ", response);
 
         if (!response.ok) {
             throw new Error(`Error al crear la tarea: ${response.statusText}`);
@@ -53,12 +58,17 @@ export async function createTask(newTask: Task): Promise<Task> {
 
 // Función para actualizar el estado de la tarea
 export async function updateTask(taskToUpdate: Task): Promise<Task | null> {
+    console.log("---- Actualizacion tarea ----");
     try {
         const taskId = taskToUpdate.id
-        console.log("---- Actualizacion tarea en backend ----");
-        const response = await fetch(`${apiUrl}/${taskId}`, {
+        console.log(taskId);
+
+        const response = await fetch(`${apiUrl}/:${taskId}`, {
             method: 'PUT',
-            body: JSON.stringify({ taskToUpdate }),
+            headers: {
+                'Content-Type': 'application/json', // Agrega este encabezado
+            },
+            body: JSON.stringify(taskToUpdate),
         });
 
         if (!response.ok) {
@@ -75,12 +85,12 @@ export async function updateTask(taskToUpdate: Task): Promise<Task | null> {
 }
 
 // Función para eliminar una tarea
-export async function deleteTask(taskId: number): Promise<void> {
+export async function deleteTask(taskId: string): Promise<void> {
+    console.log("---- Borrado tarea ----");
     try {
         const response = await fetch(`${apiUrl}/${taskId}`, {
             method: 'DELETE',
         });
-
         if (!response.ok) {
             throw new Error(`Error al eliminar la tarea: ${response.statusText}`);
         }

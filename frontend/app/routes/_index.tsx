@@ -29,6 +29,7 @@ export const action: ActionFunction = async ({ request }) => {
       return redirect('/');
 
     case 'update':
+      console.log("---- Dentro de action update ----");
       const taskIdToUpdate = formData.get('id');
       const updatedTask: Task = {
         id: taskIdToUpdate as string,
@@ -40,7 +41,8 @@ export const action: ActionFunction = async ({ request }) => {
       return redirect('/');
 
     case 'delete':
-      const taskIdToDelete = parseInt(formData.get('id') as string, 10);
+      console.log("---- Dentro de action delete ----");
+      const taskIdToDelete = formData.get('id') as string;
       await deleteTask(taskIdToDelete);
       return redirect('/');
 

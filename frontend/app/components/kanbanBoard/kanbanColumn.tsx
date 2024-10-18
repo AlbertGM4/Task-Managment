@@ -1,5 +1,5 @@
 // components/kanbanBoard/kanbanColumn.tsx
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Task } from '~/models/task';
 import { Droppable } from 'react-beautiful-dnd';
 import { KanbanColumnProps } from '~/models/kanban';
@@ -8,12 +8,30 @@ import KanbanTask from './kanbanTask';
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, handleUpdateTask, handleDeleteTask }) => {
     const [isAddingTask, setIsAddingTask] = useState(false);
+    const taskRef = useRef<HTMLDivElement | null>(null);
     const [newTask, setNewTask] = useState<Task>({
         id: '',
         title: '',
         description: '',
         status: column.id,
     });
+
+    // Maneja el clic fuera del área de la tarea
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (taskRef.current && !taskRef.current.contains(event.target as Node)) {
+                setIsAddingTask(false); // Cierra el modo de edición si se hace clic fuera
+            }
+        };
+
+        // Agregar el event listener al montar el componente
+        document.addEventListener('mousedown', handleClickOutside);
+
+        // Limpiar el event listener al desmontar
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -31,8 +49,11 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
         <Droppable key={column.id} droppableId={column.id}>
             {(provided) => (
                 <div
+                ref={(element) => {
+                    provided.innerRef(element);
+                    taskRef.current = element;
+                }}
                     {...provided.droppableProps}
-                    ref={provided.innerRef}
                     className="w-64 p-4 bg-gray-100 rounded-lg shadow-md"
                 >
                     <h2 className="font-bold text-lg mb-4">{column.title}</h2>

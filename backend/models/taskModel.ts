@@ -7,7 +7,7 @@ export enum TaskStatus {
   DONE = 'Done',
 }
 const taskSchema = new mongoose.Schema({
-  id: { type: String, required: true },
+  _id: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String, required: false },
   status: { type: String, default: TaskStatus.TODO },

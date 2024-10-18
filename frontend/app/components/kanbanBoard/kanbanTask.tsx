@@ -38,12 +38,12 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, index, handleUpdateTask, 
     };
 
     return (
-        <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+        <Draggable key={task.id} draggableId={task.id} index={index}>
             {(provided) => (
                 <div
                     ref={(element) => {
-                        provided.innerRef(element); // Asignar el ref del draggable
-                        taskRef.current = element; // Asignar el ref para clics fuera
+                        provided.innerRef(element);
+                        taskRef.current = element;
                     }}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
