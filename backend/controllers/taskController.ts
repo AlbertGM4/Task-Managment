@@ -6,7 +6,7 @@ import Task from '../models/taskModel';
 // Obtener todas las tareas
 export const getTasks = async (req: Request, res: Response) => {
   try {
-    console.log("---- Dentro back getTasks ----")
+    console.log("---- Dentro back getTasks ----");
     const tasks = await Task.find();
     res.json(tasks);
   } catch (error) {
@@ -16,10 +16,11 @@ export const getTasks = async (req: Request, res: Response) => {
 
 // Crear una nueva tarea
 export const createTask = async (req: Request, res: Response) => {
-  console.log("Request:", req);
-  const { title, description } = req.body;
-  const task = new Task({ title, description });
-
+  console.log("---- Dentro back createTask ----\n")
+  console.log("Request: \n", req.body);
+  const { id, title, description, status } = req.body;
+  const task = new Task({ id, title, description, status });
+  console.log("Task en back: ", task);
   try {
     const savedTask = await task.save();
     res.status(201).json(savedTask);

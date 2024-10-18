@@ -33,8 +33,8 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, index, handleUpdateTask, 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleUpdateTask(editedTask); // Llama a la función para actualizar la tarea
-        setIsEditing(false); // Cierra el formulario de edición
+        handleUpdateTask(editedTask);
+        setIsEditing(false);
     };
 
     return (
@@ -47,8 +47,8 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, index, handleUpdateTask, 
                     }}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className="mb-4 p-4 border rounded shadow bg-white dark:bg-gray-900 cursor-pointer" // cursor-pointer para indicar que se puede hacer clic
-                    onClick={() => setIsEditing(true)} // Cambia al modo de edición al hacer clic
+                    className="mb-4 p-4 border rounded shadow bg-white dark:bg-gray-900 cursor-pointer"
+                    onClick={() => setIsEditing(true)}
                 >
                     {isEditing ? (
                         <form onSubmit={handleSubmit}>

@@ -5,7 +5,7 @@ export interface KanbanTaskProps {
     task: Task;
     index: number;
     handleUpdateTask: (newTask: Task) => void;
-    handleDeleteTask: (taskID: number) => void;
+    handleDeleteTask: (taskID: string) => void;
 }
 
 export interface KanbanColumnScheme {
@@ -18,7 +18,7 @@ export interface KanbanColumnProps {
     column: KanbanColumnScheme;
     handleAddTask: (newTask: Task) => void;
     handleUpdateTask: (newTask: Task) => void;
-    handleDeleteTask: (taskID: number) => void;
+    handleDeleteTask: (taskID: string) => void;
 }
 
 export interface KanbanBoardProps {

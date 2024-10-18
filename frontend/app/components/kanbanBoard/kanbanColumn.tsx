@@ -8,9 +8,8 @@ import KanbanTask from './kanbanTask';
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, handleUpdateTask, handleDeleteTask }) => {
     const [isAddingTask, setIsAddingTask] = useState(false);
-    // Cambiado para ser de tipo Task
     const [newTask, setNewTask] = useState<Task>({
-        id: 0, // Un ID inicial temporal, se generará un ID único al crear la tarea
+        id: '',
         title: '',
         description: '',
         status: column.id,
@@ -23,9 +22,9 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleAddTask(newTask); // Llama a la función para agregar la tarea con los detalles del formulario
-        setNewTask({ id: 0, title: '', description: '', status: column.id }); // Reiniciar el formulario
-        setIsAddingTask(false); // Ocultar el formulario
+        handleAddTask(newTask);
+        setNewTask({ id: '', title: '', description: '', status: column.id });
+        setIsAddingTask(false);
     };
 
     return (
@@ -47,7 +46,10 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
                         />
                     ))}
                     <button
-                        onClick={() => setIsAddingTask(true)}
+                        onClick={() => {
+                            console.log("Cambiando estado a agregar tarea");
+                            setIsAddingTask(true);
+                        }}
                         className="mt-4 w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition duration-200"
                     >
                         Agregar Tarea

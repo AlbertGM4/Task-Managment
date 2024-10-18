@@ -18,6 +18,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   switch (actionType) {
     case 'add':
+      console.log("---- Dentro de action add ----");
       const newTask : Task = {
         id: uuidv4(),
         title: formData.get('title') as string,

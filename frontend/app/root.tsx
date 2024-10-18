@@ -9,7 +9,6 @@ import type { LinksFunction } from "@remix-run/node";
 import Nav from "./components/nav";
 
 import "./tailwind.css";
-import "dotenv/config"
 
 
 export const links: LinksFunction = () => [

@@ -95,7 +95,7 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
         }, { method: 'post' });
     };
 
-    const handleDeleteTask = async (taskId: number) => {
+    const handleDeleteTask = async (taskId: string) => {
         console.log("Deleting task:", taskId);
         fetcher.submit({
             action: 'delete',

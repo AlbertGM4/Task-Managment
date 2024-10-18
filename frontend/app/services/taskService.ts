@@ -1,4 +1,5 @@
 // frontend/app/services/taskService.ts
+import "dotenv/config"
 import { Task } from '../models/task';
 
 // Esta variable solo existe en el servidor
@@ -11,7 +12,7 @@ if (!apiUrl) {
 // Obtener tareas desde el servidor
 export async function getTasks(): Promise<Task[]> {
     try {
-        console.log("---- Obteniendo tareas ----")
+        console.log("---- Obteniendo tareas ----");
         const response = await fetch(apiUrl);
         if (!response.ok) {
             throw new Error('Error al obtener las tareas');
@@ -28,8 +29,13 @@ export async function getTasks(): Promise<Task[]> {
 // Función para crear una nueva tarea en el "backend"
 export async function createTask(newTask: Task): Promise<Task> {
     try {
+        console.log("---- Creando Tarea ----\n");
+        console.log("Tarea: ", JSON.stringify(newTask));
         const response = await fetch(apiUrl, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Agrega este encabezado
+            },
             body: JSON.stringify(newTask),
         });
 
