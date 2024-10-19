@@ -1,5 +1,8 @@
 // models/task.ts
 
+import { FetcherWithComponents } from "@remix-run/react";
+import { User } from "./user";
+
 export enum TaskStatus {
   TODO = 'ToDo',
   IN_PROGRESS = 'InProgress',
@@ -19,12 +22,14 @@ export interface Task {
   status: TaskStatus;
   // Extra
   user: string | null;
-  subtasks?: Task[];
+  subtasks?: string[];
   priority: TaskPriority;
 }
 
 export interface TaskListProps {
   tasks?: Task[];
+  users?: User[];
+  fetcher: FetcherWithComponents<unknown>;
 }
 
 export type TaskProviderProps = {

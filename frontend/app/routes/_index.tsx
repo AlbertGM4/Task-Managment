@@ -1,10 +1,11 @@
 // routes/index.tsx
-import { ActionFunction, json, redirect } from '@remix-run/node';
-import { createTask, deleteTask, getTasks, getUsers, updateTask } from '~/services/taskService';
+import { v4 as uuidv4 } from 'uuid';
+import { getUsers } from '~/services/userService';
 import { useLoaderData, useFetcher } from '@remix-run/react';
 import KanbanBoard from '~/components/kanbanBoard/kanbanBoard';
 import { Task, TaskPriority, TaskStatus } from '~/models/task';
-import { v4 as uuidv4 } from 'uuid';
+import { ActionFunction, json, redirect } from '@remix-run/node';
+import { createTask, deleteTask, getTasks, updateTask } from '~/services/taskService';
 
 
 export const loader = async () => {

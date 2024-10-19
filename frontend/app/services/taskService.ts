@@ -1,9 +1,8 @@
 // frontend/app/services/taskService.ts
 import "dotenv/config"
 import { Task } from '../models/task';
-import { User } from "~/models/user";
 
-// Esta variable solo existe en el servidor
+
 const apiUrl = process.env.API_URL as string;
 if (!apiUrl) {
   throw new Error('API_URL is not defined. Make sure it is available in your environment.');
@@ -35,32 +34,6 @@ export async function getTasks(): Promise<Task[]> {
     }
 }
 
-// Obtener usuarios desde el servidor
-export async function getUsers(): Promise<User[]> {
-    console.log("---- Obteniendo usuarios ----");
-    try {
-        const response = await fetch(`${apiUrl}/users`);
-        if (!response.ok) {
-            throw new Error('Error al obtener los usuarios');
-        }
-        const usersFromBackend = await response.json();
-        const users: User[] = usersFromBackend.map((user: any) => ({
-            id: user._id,
-            title: user.title,
-            description: user.description,
-            status: user.status,
-            user: user.user,
-            subtasks: user.subtasks,
-            priority: user.priority
-        }));
-        console.log("Usuarios obtenidos desde el servicio:", users);
-        return users;
-    } catch (error) {
-        console.error("Error en getUsers:", error);
-        throw error;
-    }
-}
-
 // Función para crear una nueva tarea en el "backend"
 export async function createTask(newTask: Task): Promise<Task> {
     console.log("---- Creando Tarea ----\n");
@@ -86,6 +59,29 @@ export async function createTask(newTask: Task): Promise<Task> {
     }
 }
 
+// Función para añadir una nueva subtarea en el "backend"
+export async function useAddSubtask(taskId: string, subtaskId: string): Promise<Task> {
+    console.log("---- Añadiendo Subtarea ----\n");
+    try {
+        const response = await fetch(`${apiUrl}/subtasks`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ taskId, subtaskId }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error al crear la subtarea: ${response.statusText}`);
+        }
+
+        const updatedTask: Task = await response.json();
+        return updatedTask;
+    } catch (error) {
+        console.error("Error en useAddSubtask:", error);
+        throw error;
+    }
+}
+
 // Función para actualizar el estado de la tarea
 export async function updateTask(taskToUpdate: Task): Promise<Task | null> {
     console.log("---- Actualizacion tarea ----");
@@ -96,7 +92,7 @@ export async function updateTask(taskToUpdate: Task): Promise<Task | null> {
         const response = await fetch(`${apiUrl}/:${taskId}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json', // Agrega este encabezado
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(taskToUpdate),
         });
