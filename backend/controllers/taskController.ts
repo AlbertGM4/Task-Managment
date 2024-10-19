@@ -2,6 +2,7 @@
 
 import { Request, Response } from 'express';
 import Task from '../models/taskModel';
+import { User } from '../models/user';
 
 // Obtener todas las tareas
 export const getTasks = async (req: Request, res: Response) => {
@@ -11,6 +12,17 @@ export const getTasks = async (req: Request, res: Response) => {
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener tareas', error });
+  }
+};
+
+// Obtener todas los usuarios
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    console.log("---- Dentro back getUsers ----");
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener usuarios', error });
   }
 };
 
@@ -75,7 +87,7 @@ export const deleteTask = async (req: Request, res: Response) => {
   console.log("---- Dentro back deleteTask ----\n")
   const { id } = req.params;
   const _id = id
-  
+
   try {
     const deletedTask = await Task.findByIdAndDelete(_id);
     if (deletedTask) {

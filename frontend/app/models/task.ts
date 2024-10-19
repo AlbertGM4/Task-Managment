@@ -1,4 +1,4 @@
-// models/Task.ts
+// models/task.ts
 
 export enum TaskStatus {
   TODO = 'ToDo',
@@ -6,19 +6,25 @@ export enum TaskStatus {
   DONE = 'Done',
 }
 
+export enum TaskPriority {
+  LOW = 'Low',
+  MEDIUM = 'Medium',
+  HIGH = 'High',
+}
+
 export interface Task {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   status: TaskStatus;
-  // On progress
-  /* user: any;
-  subtasks: Task[];
-  priority: number; */
+  // Extra
+  user: string | null;
+  subtasks?: Task[];
+  priority: TaskPriority;
 }
 
 export interface TaskListProps {
-  tasks: Task[];
+  tasks?: Task[];
 }
 
 export type TaskProviderProps = {

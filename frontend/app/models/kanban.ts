@@ -1,8 +1,10 @@
 import { Task, TaskStatus } from "./task";
+import { User } from "./user";
 
 
 export interface KanbanTaskProps {
     task: Task;
+    users: User[];
     index: number;
     handleUpdateTask: (newTask: Task) => void;
     handleDeleteTask: (taskID: string) => void;
@@ -16,6 +18,7 @@ export interface KanbanColumnScheme {
 
 export interface KanbanColumnProps {
     column: KanbanColumnScheme;
+    users: User[];
     handleAddTask: (newTask: Task) => void;
     handleUpdateTask: (newTask: Task) => void;
     handleDeleteTask: (taskID: string) => void;
@@ -23,6 +26,7 @@ export interface KanbanColumnProps {
 
 export interface KanbanBoardProps {
     tasks: Task[];
+    users: User[];
     fetcher: any;
   }
 

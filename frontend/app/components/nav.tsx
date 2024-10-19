@@ -22,22 +22,14 @@ export default function Nav() {
                         Tasks
                     </Link>
                 </li>
-                {/* <li>
-                    <Link
-                        to="/account"
-                        className="text-white hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium"
-                    >
-                        My Account
-                    </Link>
-                </li>
                 <li>
                     <Link
-                        to="/about"
+                        to="/profile"
                         className="text-white hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium"
                     >
-                        About
+                        My Profile
                     </Link>
-                </li> */}
+                </li>
             </ul>
         </nav>
     );

@@ -1,12 +1,12 @@
 // components/kanbanBoard/kanbanColumn.tsx
 import { useEffect, useRef, useState } from 'react';
-import { Task } from '~/models/task';
+import { Task, TaskPriority } from '~/models/task';
 import { Droppable } from 'react-beautiful-dnd';
 import { KanbanColumnProps } from '~/models/kanban';
 import KanbanTask from './kanbanTask';
 
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, handleUpdateTask, handleDeleteTask }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTask, handleUpdateTask, handleDeleteTask }) => {
     const [isAddingTask, setIsAddingTask] = useState(false);
     const taskRef = useRef<HTMLDivElement | null>(null);
     const [newTask, setNewTask] = useState<Task>({
@@ -14,13 +14,23 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
         title: '',
         description: '',
         status: column.id,
+        user: null,
+        subtasks: undefined,
+        priority: TaskPriority.LOW
     });
 
-    // Maneja el clic fuera del área de la tarea
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (taskRef.current && !taskRef.current.contains(event.target as Node)) {
-                setIsAddingTask(false); // Cierra el modo de edición si se hace clic fuera
+                setIsAddingTask(false);
+                setNewTask({
+                    id: '',
+                    title: '',
+                    description: '',
+                    status: column.id,
+                    user: null,
+                    subtasks: undefined,
+                    priority: TaskPriority.LOW });
             }
         };
 
@@ -33,15 +43,22 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
         };
     }, []);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setNewTask((prev) => ({ ...prev, [name]: value }));
+        setNewTask((prev) => ({ ...prev, [name]: value === '' ? null : value }));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleAddTask(newTask);
-        setNewTask({ id: '', title: '', description: '', status: column.id });
+        setNewTask({
+            id: '',
+            title: '',
+            description: '',
+            status: column.id,
+            user: null,
+            subtasks: undefined,
+            priority: TaskPriority.LOW });
         setIsAddingTask(false);
     };
 
@@ -54,13 +71,14 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
                     taskRef.current = element;
                 }}
                     {...provided.droppableProps}
-                    className="w-64 p-4 bg-gray-100 rounded-lg shadow-md"
+                    className="w-96 p-4 bg-gray-100 rounded-lg shadow-md"
                 >
                     <h2 className="font-bold text-lg mb-4">{column.title}</h2>
                     {column.tasks.map((task: Task, index: number) => (
                         <KanbanTask
                             key={task.id}
                             task={task}
+                            users={users}
                             index={index}
                             handleUpdateTask={handleUpdateTask}
                             handleDeleteTask={handleDeleteTask}
@@ -95,6 +113,19 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, handleAddTask, hand
                                 required
                                 className="w-full p-2 mb-2 border rounded"
                             />
+                            <select
+                                name="user"
+                                value={newTask.user || ''}
+                                onChange={handleInputChange}
+                                className="w-full p-2 mb-2 border rounded"
+                            >
+                                <option value="" disabled>Selecciona un usuario</option>
+                                {users.map(user => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.name} {user.surname}
+                                    </option>
+                                ))}
+                            </select>
                             <button
                                 type="submit"
                                 className="w-full bg-green-500 text-white font-semibold py-2 rounded hover:bg-green-600 transition duration-200"

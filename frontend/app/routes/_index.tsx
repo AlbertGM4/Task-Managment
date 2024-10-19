@@ -1,15 +1,16 @@
 // routes/index.tsx
 import { ActionFunction, json, redirect } from '@remix-run/node';
-import { createTask, deleteTask, getTasks, updateTask } from '~/services/taskService';
+import { createTask, deleteTask, getTasks, getUsers, updateTask } from '~/services/taskService';
 import { useLoaderData, useFetcher } from '@remix-run/react';
 import KanbanBoard from '~/components/kanbanBoard/kanbanBoard';
-import { Task, TaskStatus } from '~/models/task';
+import { Task, TaskPriority, TaskStatus } from '~/models/task';
 import { v4 as uuidv4 } from 'uuid';
 
 
 export const loader = async () => {
   const tasks = await getTasks();
-  return json({ tasks });
+  const users = await getUsers();
+  return json({ tasks, users });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -24,6 +25,9 @@ export const action: ActionFunction = async ({ request }) => {
         title: formData.get('title') as string,
         description: formData.get('description') as string,
         status: formData.get('status') as TaskStatus,
+        user: null,
+        subtasks: undefined,
+        priority: TaskPriority.LOW
       };
       await createTask(newTask);
       return redirect('/');
@@ -36,6 +40,9 @@ export const action: ActionFunction = async ({ request }) => {
         title: formData.get('title') as string,
         description: formData.get('description') as string,
         status: formData.get('status') as TaskStatus,
+        user: null,
+        subtasks: undefined,
+        priority: TaskPriority.LOW
       };
       await updateTask(updatedTask);
       return redirect('/');
@@ -52,13 +59,13 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const IndexPage = () => {
-  const { tasks } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof useFetcher>();
+  const { tasks, users } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Kanban Board</h1>
-      <KanbanBoard tasks={tasks} fetcher={fetcher}/>
+    <div className="min-h-screen bg-gray-100 p-6 flex flex-col items-center">
+      <h1 id="kanbanTitle" className="text-3xl font-bold text-center mb-6">Kanban Board</h1>
+        <KanbanBoard tasks={tasks} users={users} fetcher={fetcher} />
     </div>
   );
 };

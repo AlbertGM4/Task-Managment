@@ -9,7 +9,7 @@ import KanbanColumn from './kanbanColumn';
 
 
 
-const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
+const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, users, fetcher }) => {
     const [columns, setColumns] = useState<Record<TaskStatus, KanbanColumnScheme>>(predefinedColumns);
 
     const filteredTasks = (status: TaskStatus) => {
@@ -97,17 +97,18 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, fetcher }) => {
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <div className="flex space-x-4 overflow-x-auto p-4">
-                {Object.values(columns).map((column) => (
-                    <KanbanColumn
-                        key={column.id}
-                        column={column}
-                        handleAddTask={handleAddTask}
-                        handleUpdateTask={handleUpdateTask}
-                        handleDeleteTask={handleDeleteTask}
-                    />
-                ))}
-            </div>
+                <div id="kanBanBoard" className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-screen-xl justify-items-center">
+                    {Object.values(columns).map((column) => (
+                        <KanbanColumn
+                            key={column.id}
+                            column={column}
+                            users={users}
+                            handleAddTask={handleAddTask}
+                            handleUpdateTask={handleUpdateTask}
+                            handleDeleteTask={handleDeleteTask}
+                        />
+                    ))}
+                </div>
         </DragDropContext>
     );
 };

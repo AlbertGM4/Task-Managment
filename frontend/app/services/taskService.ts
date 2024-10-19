@@ -1,6 +1,7 @@
 // frontend/app/services/taskService.ts
 import "dotenv/config"
 import { Task } from '../models/task';
+import { User } from "~/models/user";
 
 // Esta variable solo existe en el servidor
 const apiUrl = process.env.API_URL as string;
@@ -12,7 +13,7 @@ if (!apiUrl) {
 export async function getTasks(): Promise<Task[]> {
     console.log("---- Obteniendo tareas ----");
     try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(`${apiUrl}/tasks`);
         if (!response.ok) {
             throw new Error('Error al obtener las tareas');
         }
@@ -22,12 +23,41 @@ export async function getTasks(): Promise<Task[]> {
             title: task.title,
             description: task.description,
             status: task.status,
+            user: task.user,
+            subtasks: task.subtasks,
+            priority: task.priority
         }));
         console.log("Tareas obtenidas desde el servicio:", tasks);
         return tasks;
     } catch (error) {
         console.error("Error en getTasks:", error);
         throw error; // Propagar el error para manejarlo en el componente
+    }
+}
+
+// Obtener usuarios desde el servidor
+export async function getUsers(): Promise<User[]> {
+    console.log("---- Obteniendo usuarios ----");
+    try {
+        const response = await fetch(`${apiUrl}/users`);
+        if (!response.ok) {
+            throw new Error('Error al obtener los usuarios');
+        }
+        const usersFromBackend = await response.json();
+        const users: User[] = usersFromBackend.map((user: any) => ({
+            id: user._id,
+            title: user.title,
+            description: user.description,
+            status: user.status,
+            user: user.user,
+            subtasks: user.subtasks,
+            priority: user.priority
+        }));
+        console.log("Usuarios obtenidos desde el servicio:", users);
+        return users;
+    } catch (error) {
+        console.error("Error en getUsers:", error);
+        throw error;
     }
 }
 
