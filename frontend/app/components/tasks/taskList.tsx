@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from "react";
 const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
     const [isAddingTask, setIsAddingTask] = useState(false);
     const [isEditingTaskId, setIsEditingTaskId] = useState<string | null>(null);
-    const [subtaskForms, setSubtaskForms] = useState<{ [key: string]: boolean }>({});
-    const [newSubtaskId, setNewSubtaskId] = useState<string>('');
+    const [selectedSubtasks, setSelectedSubtasks] = useState<string[]>([]);
 
     const addTaskFormRef = useRef<Map<boolean, HTMLFormElement | null>>(new Map());
     const addTaskItemRefs = useRef<Map<boolean, HTMLDivElement | null>>(new Map());
@@ -18,7 +17,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
         description: '',
         status: TaskStatus.TODO,
         user: null,
-        subtasks: undefined,
+        subtasks: [],
         priority: TaskPriority.LOW
     });
     const [newSubtask, setNewSubtask] = useState<{ id: string; title: string } | null>(null);
@@ -60,25 +59,37 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
     }, [isAddingTask, isEditingTaskId]);
 
     // Tasks
-    const handleToggleEditTask = (taskId: string) => {
-        if (isEditingTaskId === taskId) {
-            setIsEditingTaskId(null);
-        } else {
-            setIsEditingTaskId(taskId);
-        }
-    };
-
+    // Show/hide add task form
     const handleToggleAddTask = () => {
         if (isAddingTask === false) {
             setIsAddingTask(true);
         }
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    // Register new task changes
+    const handleNewTaskChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setNewTask((prev) => ({ ...prev, [name]: value === '' ? null : value }));
+
+        // Si el select es múltiple
+        if (name === 'subtasks[]') {
+            console.log("Dentro de onchange")
+            const selectElement = e.target as HTMLSelectElement;
+            const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.value);
+            console.log("Opciones: ", selectedOptions)
+            setNewTask(prevTask => ({
+                ...prevTask,
+                subtasks: selectedOptions,
+            }));
+        } else {
+            // Maneja otros campos
+            setNewTask(prevTask => ({
+                ...prevTask,
+                [name]: value === '' ? null : value
+            }));
+        }
     };
 
+    // Clean new task
     const resetNewTask = () => {
         setNewTask({
             id: '',
@@ -91,13 +102,33 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
         });
     };
 
+    // Submit new task
     const handleSubmitAddTask = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        fetcher.submit(new FormData(e.currentTarget), { method: 'post' });
-        resetNewTask();
-        setIsAddingTask(false);
+        const addForm = addTaskFormRef.current?.get(true);
+        if (addForm) {
+            const formData = new FormData(addForm);
+
+            selectedSubtasks.forEach(subtaskId => {
+                formData.append('subtasks[]', subtaskId);
+            });
+
+            fetcher.submit(formData, { method: 'post' });
+            resetNewTask();
+            setIsAddingTask(false);
+        }
     };
 
+    // Show/hide edit task form
+    const handleToggleEditTask = (taskId: string) => {
+        if (isEditingTaskId === taskId) {
+            setIsEditingTaskId(null);
+        } else {
+            setIsEditingTaskId(taskId);
+        }
+    };
+
+    // Submit update task
     const handleSubmitEditTask = (e: React.FormEvent<HTMLFormElement>, taskId: string) => {
         e.preventDefault();
         fetcher.submit(new FormData(e.currentTarget), { method: 'post' });
@@ -105,24 +136,13 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
     };
 
     // Subtask
-    const handleToggleAddSubtask = (taskId: string) => {
-        setSubtaskForms((prev) => ({
-            ...prev,
-            [taskId]: !prev[taskId]
-        }));
-    };
-
-    const handleSubtaskChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setNewSubtaskId(e.target.value);
-    };
-
-    const handleSubmitAddSubtask = (e: React.FormEvent<HTMLFormElement>, taskId: string) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        fetcher.submit(new FormData(e.currentTarget), { method: 'post' });
-
-        setNewSubtaskId('');
-        setSubtaskForms((prev) => ({ ...prev, [taskId]: false }));
+    const handleSubtaskClick = (subtaskId: string) => {
+        // Si ya está seleccionado, lo deseleccionamos; de lo contrario, lo seleccionamos
+        setSelectedSubtasks(prev =>
+            prev.includes(subtaskId)
+                ? prev.filter(id => id !== subtaskId)
+                : [...prev, subtaskId]
+        );
     };
 
     return (
@@ -147,26 +167,73 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                     >
                         <input type="hidden" name="action" value="add" />
                         <input
-                            type="text"
-                            name="title"
-                            placeholder="Título de la tarea"
-                            value={newTask.title}
-                            onChange={handleInputChange}
-                            required
-                            className="w-full p-2 mb-2 border rounded"
+                            type="text" id="addTaskTitle" name="title" placeholder="Título de la tarea"
+                            value={newTask.title} onChange={handleNewTaskChange}
+                            className="w-full p-2 mb-2 border rounded" required
                         />
                         <textarea
-                            name="description"
-                            placeholder="Descripción"
-                            value={newTask.description}
-                            onChange={handleInputChange}
-                            required
-                            className="w-full p-2 mb-2 border rounded"
+                            id="addTaskDescription" name="description" placeholder="Descripción"
+                            value={newTask.description} onChange={handleNewTaskChange}
+                            className="w-full p-2 mb-2 border rounded" required
                         />
+                        {/* Selección de subtareas en nueva tarea*/}
+                        <div className="mb-2">
+                            {/* <select
+                                id="subtaskIds" name="subtasks[]"
+                                value={newTask.subtasks || []} onChange={handleNewTaskChange}
+                                className="border rounded p-2" multiple
+                            >
+                                <option value="" disabled>Seleccionar subtarea</option>
+                                {tasks?.map((subtask) => (
+                                    <option key={subtask.id} value={subtask.id}>
+                                        {subtask.title}
+                                    </option>
+                                ))}
+                            </select> */}
+                            <h4>Selecciona Subtareas</h4>
+                                <ul className="list-none p-0">
+                                    {tasks?.map((subtask) => (
+                                        <li
+                                            key={subtask.id}
+                                            onClick={() => handleSubtaskClick(subtask.id)}
+                                            className={`cursor-pointer p-2 rounded ${
+                                                selectedSubtasks.includes(subtask.id)
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'bg-gray-200'
+                                            }`}
+                                        >
+                                            {subtask.title}
+                                        </li>
+                                    ))}
+                                </ul>
+                        </div>
+                        {/* Lista de subtareas seleccionadas */}
+                        {selectedSubtasks && selectedSubtasks.length > 0 && (
+                            <div className="mb-4">
+                                <h4 className="font-semibold">Subtareas añadidas</h4>
+                                <ul>
+                                    {selectedSubtasks.map((subtaskId) => {
+                                        const subtask = tasks?.find(t => t.id === subtaskId);
+                                        return subtask ? (
+                                            <li key={subtask.id} className="flex justify-between items-center mb-2">
+                                                {subtask.title}
+                                                {/* <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveSubtask(subtask.id)}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    Quitar
+                                                </button> */}
+                                            </li>
+                                        ) : null;
+                                    })}
+                                </ul>
+                            </div>
+                        )}
                         <div className="flex justify-between">
                             <select
-                                name="status"
-                                defaultValue={newTask.status}
+                                id="addTaskStatus" name="status"
+                                defaultValue={newTask.status} onChange={handleNewTaskChange}
                                 className="border rounded p-2 mr-2"
                             >
                                 {Object.values(TaskStatus).map((status) => (
@@ -176,8 +243,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                 ))}
                             </select>
                             <select
-                                name="priority"
-                                defaultValue={newTask.priority}
+                                id="addTaskPriority" name="priority"
+                                defaultValue={newTask.priority} onChange={handleNewTaskChange}
                                 className="border rounded p-2"
                             >
                                 {Object.values(TaskPriority).map((status) => (
@@ -187,9 +254,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                 ))}
                             </select>
                             <select
-                                name="user"
-                                value={newTask.user ?? ""}
-                                onChange={handleInputChange}
+                                id="addTaskUser" name="user"
+                                value={newTask.user ?? ""} onChange={handleNewTaskChange}
                                 className="border rounded p-2"
                             >
                                 <option key="none" value="none">
@@ -220,17 +286,13 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
             ) : (
                 <ul className="space-y-2">
                     {tasks?.map((task) => (
-                        <li
-                            key={task.id}
+                        <li key={task.id} ref={(el) => editTaskItemRefs.current.set(task.id, el)}
                             className="border p-4 rounded shadow"
-                            ref={(el) => editTaskItemRefs.current.set(task.id, el)}
                         >
                             <div onClick={() => handleToggleEditTask(task.id)}>
-                                <h3 className="font-semibold">{task.title}</h3>
+                                <h2 className="font-semibold">{task.title}</h2>
+                                <h4 className="font-semibold">Descripcion:</h4>
                                 <p>{task.description}</p>
-                                <p>{task.status}</p>
-                                <p>{task.priority}</p>
-
                                 {/* Subtareas */}
                                 <div className="mt-4">
                                     <h4 className="font-semibold">Subtareas</h4>
@@ -249,14 +311,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                         <p>No hay subtareas.</p>
                                     )}
 
-                                    <button
-                                        onClick={() => handleToggleAddSubtask(task.id)}
-                                        className="mt-2 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                    >
-                                        Añadir Subtarea
-                                    </button>
-
-                                    {subtaskForms[task.id] && (
+                                    {/* {subtaskForms[task.id] && (
                                         <form onSubmit={(e) => handleSubmitAddSubtask(e, task.id)}>
                                             <input type="hidden" name="action" value="addSubtask" />
                                             <input type="hidden" name="taskId" value={task.id} />
@@ -280,8 +335,11 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                                 Agregar
                                             </button>
                                         </form>
-                                    )}
+                                    )} */}
                                 </div>
+                                <p className="font-semibold">Status: </p><span>{task.status}</span>
+                                <p className="font-semibold">Priority: </p><span>{task.priority}</span>
+                                <p className="font-semibold">User: </p><span>{task.user}</span>
                             </div>
 
                             {/* Mostrar el formulario de edición solo si es la tarea seleccionada */}
@@ -319,7 +377,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                         <select
                                             name="priority"
                                             value={newTask.priority}
-                                            onChange={handleInputChange}
+                                            onChange={handleNewTaskChange}
                                             className="border rounded p-2 mr-2"
                                         >
                                             {Object.values(TaskPriority).map((priority) => (
@@ -331,7 +389,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                         <select
                                             name="user"
                                             value={newTask.user ?? ""}
-                                            onChange={handleInputChange}
+                                            onChange={handleNewTaskChange}
                                             className="border rounded p-2"
                                         >
                                             <option key="none" value="none">

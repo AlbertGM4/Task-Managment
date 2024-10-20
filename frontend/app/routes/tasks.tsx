@@ -27,16 +27,16 @@ export const action: ActionFunction = async ({ request }) => {
                 id: uuidv4(),
                 title: formData.get('title') as string,
                 description: formData.get('description') as string,
-                status: TaskStatus.TODO, // O cualquier estado inicial que desees
+                status: formData.get('status') as TaskStatus,
                 user: formData.get('user') as string | null,
-                subtasks: undefined,
-                priority: TaskPriority.LOW, // O cualquier prioridad inicial que desees
+                subtasks: formData.getAll('subtasks[]') as string[],
+                priority: formData.get('priority') as TaskPriority,
             };
             await createTask(newTask);
             return redirect('/tasks');
 
         case 'addSubtask':
-            console.log("---- EN actoin ----")
+            console.log("---- En action ----")
             const taskId = formData.get('taskId') as string;
             const subtaskId = formData.get('subtaskId') as string;
             console.log(taskId)

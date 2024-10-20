@@ -9,7 +9,7 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
     const [editedTask, setEditedTask] = useState<Task>(task);
     const [selectedSubtask, setSelectedSubtask] = useState<string>('');
     const [newSubtasks, setNewSubtasks] = useState<string[]>([]);
-    const taskRef = useRef<HTMLDivElement | null>(null); // Referencia para el div de la tarea
+    const taskRef = useRef<HTMLDivElement | null>(null);
 
 
     // Maneja el clic fuera del área de la tarea

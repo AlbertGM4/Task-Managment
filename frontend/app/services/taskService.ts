@@ -87,7 +87,6 @@ export async function updateTask(taskToUpdate: Task): Promise<Task | null> {
     console.log("---- Actualizacion tarea ----");
     try {
         const taskId = taskToUpdate.id
-        console.log(taskId);
 
         const response = await fetch(`${apiUrl}/:${taskId}`, {
             method: 'PUT',

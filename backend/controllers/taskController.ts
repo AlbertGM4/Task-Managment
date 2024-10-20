@@ -29,19 +29,17 @@ export const getUsers = async (req: Request, res: Response) => {
 // Crear una nueva tarea
 export const createTask = async (req: Request, res: Response) => {
   console.log("---- Dentro back createTask ----\n")
-  const { id, title, description, status, user, subtasks, priority } = req.body;
-
+  const {
+    id, title, description,
+    subtasks, status, priority, user
+  } = req.body;
+  console.log("Sub: ", subtasks)
   const task = new Task(
                 { _id: id,
-                  title,
-                  description,
-                  status,
-                  user,
-                  subtasks,
-                  priority,
-                });
-  console.log("Task en back: ", task);
-
+                  title, description, subtasks,
+                  status, priority, user
+                }
+              );
   try {
     const savedTask = await task.save();
     res.status(201).json(savedTask);
