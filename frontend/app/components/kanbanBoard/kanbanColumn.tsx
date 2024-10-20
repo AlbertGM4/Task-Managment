@@ -78,6 +78,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
                         <KanbanTask
                             key={task.id}
                             task={task}
+                            subtasks={column.subtasks}
                             users={users}
                             index={index}
                             handleUpdateTask={handleUpdateTask}

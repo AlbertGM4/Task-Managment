@@ -8,14 +8,12 @@ import {
   updateTask,
   deleteTask,
   getUsers,
-  createSubtask,
 } from '../controllers/taskController';
 
 const router = Router();
 
 // Rutas para las tareas
 router.get('/tasks', getTasks);           // Obtener todas las tareas
-router.post('/subtasks', createSubtask);  // Añadir una subtarea a una tarea
 router.get('/users', getUsers);           // Obtener todos los usuarios
 router.post('/', createTask);             // Crear una nueva tarea
 router.get('/:id', getTaskById);          // Obtener una tarea por ID

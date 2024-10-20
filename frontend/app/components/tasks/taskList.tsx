@@ -118,10 +118,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
 
     const handleSubmitAddSubtask = (e: React.FormEvent<HTMLFormElement>, taskId: string) => {
         e.preventDefault();
-        console.log("AÑADIENDO SUBTAREA")
         const formData = new FormData(e.currentTarget);
-        console.log("FormData content:", Object.fromEntries(formData.entries())); // Muestra el contenido del FormData
-
         fetcher.submit(new FormData(e.currentTarget), { method: 'post' });
 
         setNewSubtaskId('');
@@ -234,7 +231,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }) => {
                                 <p>{task.status}</p>
                                 <p>{task.priority}</p>
 
-                                {/* Mostrar subtareas */}
                                 {/* Subtareas */}
                                 <div className="mt-4">
                                     <h4 className="font-semibold">Subtareas</h4>

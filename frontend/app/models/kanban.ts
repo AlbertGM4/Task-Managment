@@ -4,6 +4,7 @@ import { User } from "./user";
 
 export interface KanbanTaskProps {
     task: Task;
+    subtasks: { [taskTitle: string]: { id: string, subtasks: { id: string, title: string }[] } };
     users: User[];
     index: number;
     handleUpdateTask: (newTask: Task) => void;
@@ -14,6 +15,7 @@ export interface KanbanColumnScheme {
     id: TaskStatus;
     title: string;
     tasks: Task[];
+    subtasks: { [taskTitle: string]: { id: string, subtasks: { id: string, title: string }[] } }
 }
 
 export interface KanbanColumnProps {
@@ -35,15 +37,18 @@ export const columns: Record<TaskStatus, KanbanColumnScheme> = {
         id: TaskStatus.TODO,
         title: 'Por Hacer',
         tasks: [],
+        subtasks: {}
     },
     [TaskStatus.IN_PROGRESS]: {
         id: TaskStatus.IN_PROGRESS,
         title: 'En Progreso',
         tasks: [],
+        subtasks: {}
     },
     [TaskStatus.DONE]: {
         id: TaskStatus.DONE,
         title: 'Completadas',
         tasks: [],
+        subtasks: {}
     },
 };
