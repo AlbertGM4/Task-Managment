@@ -31,7 +31,8 @@ export const createUser = async (req: Request, res: Response) => {
     const savedUser = await user.save();
     res.status(201).json(savedUser);
   } catch (error) {
-    if (error.code === 11000) {  // Código de error de MongoDB para duplicados
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+    if (error instanceof Error && error.message.includes('duplicate key')) {
       res.status(400).json({ message: 'El email ya está en uso' });
     } else {
       res.status(500).json({ message: 'Error al crear el usuario', error });
