@@ -27,6 +27,7 @@ export async function getUsers(): Promise<User[]> {
 // Crear un nuevo usuario en el servidor
 export async function createUser(newUser: User): Promise<User> {
     console.log("---- Creando Usuario ----");
+    console.log("New user: ", newUser)
     try {
         const response = await fetch(`${apiUrl}/users`, {
             method: 'POST',

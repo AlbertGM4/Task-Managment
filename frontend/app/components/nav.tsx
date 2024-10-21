@@ -24,10 +24,10 @@ export default function Nav() {
                 </li>
                 <li>
                     <Link
-                        to="/profile"
+                        to="/users"
                         className="text-white hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium"
                     >
-                        My Profile
+                       Users
                     </Link>
                 </li>
             </ul>

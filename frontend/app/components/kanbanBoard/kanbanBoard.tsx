@@ -87,12 +87,9 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, users, fetcher }) => 
     };
 
     const handleAddTask = async (taskData: Task) => {
-        console.log("Creating task:", taskData);
         fetcher.submit({
             action: 'add',
-            title: taskData.title,
-            description: taskData.description,
-            status: taskData.status || TaskStatus.TODO
+            task: JSON.stringify(taskData),
         }, { method: 'post' });
     };
 
@@ -114,10 +111,7 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, users, fetcher }) => 
 
         fetcher.submit({
             action: 'update',
-            id: taskToUpdate.id,
-            title: taskToUpdate.title,
-            description: taskToUpdate.description,
-            status: taskToUpdate.status
+            task: JSON.stringify(taskToUpdate),
         }, { method: 'post' });
     };
 

@@ -32,7 +32,7 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
                     type="text"
                     name="surname"
                     placeholder="Apellido"
-                    value={newUser.name}
+                    value={newUser.surname}
                     onChange={handleInputChange}
                     required
                     className="border p-2 mb-2 rounded w-full"

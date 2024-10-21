@@ -15,17 +15,6 @@ export const getTasks = async (req: Request, res: Response) => {
   }
 };
 
-// Obtener todas los usuarios
-export const getUsers = async (req: Request, res: Response) => {
-  console.log("---- Dentro back getUsers ----\n")
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener usuarios', error });
-  }
-};
-
 // Crear una nueva tarea
 export const createTask = async (req: Request, res: Response) => {
   console.log("---- Dentro back createTask ----\n")
@@ -48,28 +37,12 @@ export const createTask = async (req: Request, res: Response) => {
   }
 };
 
-// Obtener una tarea por ID
-export const getTaskById = async (req: Request, res: Response) => {
-  console.log("---- Dentro back getTaskById ----\n")
-  const { id } = req.params;
-
-  try {
-    const task = await Task.findById(id);
-    if (task) {
-      res.json(task);
-    } else {
-      res.status(404).json({ message: 'Tarea no encontrada' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error al obtener la tarea', error });
-  }
-};
-
 // Actualizar una tarea
 export const updateTask = async (req: Request, res: Response) => {
   console.log("---- Dentro back updateTask ----\n")
   const { id, ...taskData } = req.body;
   const _id = id;
+  console.log("Esta es la atsk Data: ", taskData)
 
   try {
     const updatedTask = await Task.findByIdAndUpdate(

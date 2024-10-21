@@ -52,7 +52,7 @@ export const action: ActionFunction = async ({ request }) => {
                 description: formData.get('description') as string,
                 status: formData.get('status') as TaskStatus,
                 user: formData.get('user') as string | null,
-                subtasks: undefined,
+                subtasks: formData.getAll('subtasks[]') as string[],
                 priority: formData.get('priority') as TaskPriority,
             };
             await updateTask(updatedTask);

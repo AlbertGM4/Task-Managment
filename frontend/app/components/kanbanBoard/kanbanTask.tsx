@@ -2,13 +2,13 @@ import { Task, TaskPriority } from '~/models/task';
 import { Draggable } from 'react-beautiful-dnd';
 import { KanbanTaskProps } from '~/models/kanban';
 import React, { useEffect, useRef, useState } from 'react';
+import Markdown from 'react-markdown';
 
 
 const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, handleUpdateTask, handleDeleteTask }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedTask, setEditedTask] = useState<Task>(task);
-    const [selectedSubtask, setSelectedSubtask] = useState<string>('');
-    const [newSubtasks, setNewSubtasks] = useState<string[]>([]);
+    const [selectedSubtasks, setSelectedSubtasks] = useState<string[]>([]);
     const taskRef = useRef<HTMLDivElement | null>(null);
 
 
@@ -43,25 +43,29 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        selectedSubtasks.forEach(subtaskId => {
+            editedTask.subtasks.push(subtaskId);
+        });
         handleUpdateTask(editedTask);
         setIsEditing(false);
     };
 
-    const handleAddSubtask = () => {
-        if (!selectedSubtask) return;
+    // Subtask
+    const handleSubtaskClick = (subtaskId: string) => {
+        setSelectedSubtasks(prev =>
+            prev.includes(subtaskId)
+                ? prev.filter(id => id !== subtaskId)
+                : [...prev, subtaskId]
+        );
+    };
 
-        // Obtener las subtareas actuales de la tarea principal
-        const actualSubTasks = subtasks[task.id]?.subtasks.map(subtask => subtask.id) || [];
-
-        // Añadir la nueva subtarea seleccionada a las subtareas actuales
-        const updatedSubtasks = [...actualSubTasks, selectedSubtask];
-
-        console.log("Subtareas actualizadas: ", updatedSubtasks);
-
-        // Aquí deberías incluir la lógica para guardar las subtareas en el estado o en el servidor
-        setNewSubtasks(updatedSubtasks)
-
-        setSelectedSubtask('');
+    const getSelectedSubtask = (taskId: string) => {
+        for (const taskTitle in subtasks) {
+            const task = subtasks[taskTitle];
+            if (task.id === taskId) {
+                return taskTitle
+            }
+        }
     };
 
     return (
@@ -95,8 +99,47 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
                                 onChange={handleInputChange}
                                 required
                                 className="w-full p-2 mb-2 border rounded"
-                                style={{ whiteSpace: 'normal' }} // Asegura que el texto se expanda hacia abajo
+                                style={{ whiteSpace: 'normal' }}
                             />
+                            {/* Selección de subtareas en nueva tarea*/}
+                            <div className="mb-2">
+                                <h4>Selecciona Subtareas</h4>
+                                <ul className="list-none p-0">
+                                {Object.keys(subtasks)
+                                    .filter((taskTitle) => subtasks[taskTitle].id !== task.id)
+                                    .map((taskTitle) => {
+                                        const task = subtasks[taskTitle];
+
+                                        return (
+                                            <li
+                                                key={task.id}
+                                                onClick={() => handleSubtaskClick(task.id)}
+                                                className={`cursor-pointer p-2 rounded ${
+                                                    selectedSubtasks.includes(task.id) ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                                                }`}
+                                            >
+                                                {taskTitle}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                            {/* Lista de subtareas seleccionadas */}
+                            {selectedSubtasks && selectedSubtasks.length > 0 && (
+                                <div className="mb-4">
+                                    <h4 className="font-semibold">Subtareas añadidas</h4>
+                                    <ul>
+                                        {selectedSubtasks.map((subtaskId) => {
+                                            const subtaskTitle = getSelectedSubtask(subtaskId)
+                                            return (
+                                                <li key={subtaskId} className="cursor-pointer p-2 rounded">
+                                                    {subtaskTitle}
+                                                </li>
+                                            )
+                                        })}
+                                    </ul>
+                                </div>
+                            )}
                             <select
                                 name="user"
                                 value={editedTask.user || ''}
@@ -119,26 +162,6 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
                                     <option key={priority} value={priority}>{priority}</option>
                                 ))}
                             </select>
-                            <select
-                                value={selectedSubtask}
-                                onChange={(e) => setSelectedSubtask(e.target.value)}
-                                className="w-full p-2 mb-2 border rounded"
-                            >
-                                <option value="" disabled>Seleccionar Subtarea</option>
-                                {/* Muestra las claves de las tareas, excluyendo la tarea actual */}
-                                {Object.keys(subtasks).filter(taskTitle => subtasks[taskTitle].id !== task.id).map(taskTitle => (
-                                        <option key={subtasks[taskTitle].id} value={taskTitle}>
-                                            {taskTitle} {/* Muestra título de la tarea principal y subtarea */}
-                                        </option>
-                                    )
-                                )}
-                            </select>
-                            <button
-                                className="w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition duration-200"
-                                onClick={handleAddSubtask}
-                            >
-                                Añadir Subtarea
-                            </button>
                             <button
                                 type="submit"
                                 className="w-full bg-green-500 text-white font-semibold py-2 rounded hover:bg-green-600 transition duration-200"
@@ -159,18 +182,28 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
                                     overflow: 'hidden',
                                   }}
                             >
-                                Descripcion: {task.description}
+                                Descripcion: <Markdown>{task.description}</Markdown>
                             </p>
-                            <p>Prioridad: {task.priority}</p>
-                            {Object.keys(subtasks).filter(taskTitle => subtasks[taskTitle].id !== task.id).map(taskTitle => (
-                                subtasks[taskTitle].subtasks.map(subtask => (
-                                    <option key={subtask.id} value={subtask.id}>
-                                        {taskTitle} - {subtask.title} {/* Muestra título de la tarea principal y subtarea */}
-                                    </option>
-                                ))
-                            ))}
-                            <p>Usuario: {handleUser(task.user)}</p>
-
+                            <div className="mt-4">
+                                <h4 className="font-semibold">Subtareas:</h4>
+                                {task.subtasks && task.subtasks.length > 0 ? (
+                                    <ul>
+                                        {Object.keys(subtasks)
+                                            .filter(taskTitle => task.subtasks.includes(subtasks[taskTitle].id))
+                                            .map(taskTitle => (
+                                                <li key={subtasks[taskTitle].id}>
+                                                    {taskTitle}
+                                                </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No hay subtareas.</p>
+                                )}
+                            </div>
+                            <div className="mt-4">
+                                <p>Prioridad: {task.priority}</p>
+                                <p>Usuario: {handleUser(task.user)}</p>
+                            </div>
                             <button
                                 onClick={() => handleDeleteTask(task.id)}
                                 className="mt-2 bg-red-500 text-white p-2 rounded"

@@ -21,32 +21,29 @@ export const action: ActionFunction = async ({ request }) => {
   switch (actionType) {
     case 'add':
       console.log("---- Dentro de action add ----");
-      const newTask : Task = {
-        id: uuidv4(),
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        status: formData.get('status') as TaskStatus,
-        user: null,
-        subtasks: undefined,
-        priority: TaskPriority.LOW
-      };
-      await createTask(newTask);
-      return redirect('/');
+      const taskAddData = formData.get('task');
+
+      if (taskAddData) {
+        const newTask: Task = JSON.parse(taskAddData as string);
+        newTask.id = uuidv4()
+        await createTask(newTask);
+        return redirect('/');
+      } else {
+        return json({ error: 'No task data to add provided' }, { status: 400 });
+      }
 
     case 'update':
       console.log("---- Dentro de action update ----");
-      const taskIdToUpdate = formData.get('id');
-      const updatedTask: Task = {
-        id: taskIdToUpdate as string,
-        title: formData.get('title') as string,
-        description: formData.get('description') as string,
-        status: formData.get('status') as TaskStatus,
-        user: null,
-        subtasks: undefined,
-        priority: TaskPriority.LOW
-      };
-      await updateTask(updatedTask);
-      return redirect('/');
+      const taskEditData = formData.get('task');
+
+      if (taskEditData) {
+          const updatedTask: Task = JSON.parse(taskEditData as string);
+          await updateTask(updatedTask);
+
+          return redirect('/');
+      } else {
+          return json({ error: 'No task data to update provided' }, { status: 400 });
+      }
 
     case 'delete':
       console.log("---- Dentro de action delete ----");

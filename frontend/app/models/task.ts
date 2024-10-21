@@ -18,17 +18,17 @@ export enum TaskPriority {
 export interface Task {
   id: string;
   title: string;
-  description?: string;
+  description: string;
   status: TaskStatus;
   // Extra
   user: string | null;
-  subtasks?: string[];
+  subtasks: string[];
   priority: TaskPriority;
 }
 
 export interface TaskListProps {
-  tasks?: Task[];
-  users?: User[];
+  tasks: Task[];
+  users: User[];
   fetcher: FetcherWithComponents<unknown>;
 }
 

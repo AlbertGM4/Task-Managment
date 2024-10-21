@@ -1,6 +1,6 @@
 // components/kanbanBoard/kanbanColumn.tsx
 import { useEffect, useRef, useState } from 'react';
-import { Task, TaskPriority } from '~/models/task';
+import { Task, TaskPriority, TaskStatus } from '~/models/task';
 import { Droppable } from 'react-beautiful-dnd';
 import { KanbanColumnProps } from '~/models/kanban';
 import KanbanTask from './kanbanTask';
@@ -8,6 +8,7 @@ import KanbanTask from './kanbanTask';
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTask, handleUpdateTask, handleDeleteTask }) => {
     const [isAddingTask, setIsAddingTask] = useState(false);
+    const [selectedSubtasks, setSelectedSubtasks] = useState<string[]>([]);
     const taskRef = useRef<HTMLDivElement | null>(null);
     const [newTask, setNewTask] = useState<Task>({
         id: '',
@@ -15,7 +16,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
         description: '',
         status: column.id,
         user: null,
-        subtasks: undefined,
+        subtasks: [],
         priority: TaskPriority.LOW
     });
 
@@ -29,7 +30,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
                     description: '',
                     status: column.id,
                     user: null,
-                    subtasks: undefined,
+                    subtasks: [],
                     priority: TaskPriority.LOW });
             }
         };
@@ -50,6 +51,9 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        selectedSubtasks.forEach(subtaskId => {
+            newTask.subtasks.push(subtaskId);
+        });
         handleAddTask(newTask);
         setNewTask({
             id: '',
@@ -57,9 +61,17 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
             description: '',
             status: column.id,
             user: null,
-            subtasks: undefined,
+            subtasks: [],
             priority: TaskPriority.LOW });
         setIsAddingTask(false);
+    };
+
+    const handleSubtaskClick = (subtaskId: string) => {
+        setSelectedSubtasks(prev =>
+            prev.includes(subtaskId)
+                ? prev.filter(id => id !== subtaskId)
+                : [...prev, subtaskId]
+        );
     };
 
     return (
@@ -114,19 +126,64 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
                                 required
                                 className="w-full p-2 mb-2 border rounded"
                             />
-                            <select
-                                name="user"
-                                value={newTask.user || ''}
-                                onChange={handleInputChange}
-                                className="w-full p-2 mb-2 border rounded"
-                            >
-                                <option value="" disabled>Selecciona un usuario</option>
-                                {users.map(user => (
-                                    <option key={user.id} value={user.id}>
-                                        {user.name} {user.surname}
+                            {/* Selección de subtareas en nueva tarea*/}
+                            <div className="mb-2">
+                                <h4>Selecciona Subtareas</h4>
+                                <ul className="list-none p-0">
+                                    {Object.keys(column.subtasks).map((taskTitle) => {
+                                        const task = column.subtasks[taskTitle];
+                                        return (
+                                            <li
+                                                key={task.id}
+                                                onClick={() => handleSubtaskClick(task.id)}
+                                                className={`cursor-pointer p-2 rounded ${
+                                                    selectedSubtasks.includes(task.id) ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                                                }`}
+                                            >
+                                                {taskTitle}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                            <div className="flex justify-between">
+                                <select
+                                    id="addTaskStatus" name="status"
+                                    defaultValue={newTask.status} onChange={handleInputChange}
+                                    className="border rounded p-2 mr-2"
+                                >
+                                    {Object.values(TaskStatus).map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    id="addTaskPriority" name="priority"
+                                    defaultValue={newTask.priority} onChange={handleInputChange}
+                                    className="border rounded p-2"
+                                >
+                                    {Object.values(TaskPriority).map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    id="addTaskUser" name="user"
+                                    value={newTask.user ?? ""} onChange={handleInputChange}
+                                    className="border rounded p-2"
+                                >
+                                    <option key="none" value="none">
+                                        <p>Sin usuario</p>
                                     </option>
-                                ))}
-                            </select>
+                                    {users.map((user) => (
+                                        <option key={user.id} value={user.name}>
+                                            {user.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                             <button
                                 type="submit"
                                 className="w-full bg-green-500 text-white font-semibold py-2 rounded hover:bg-green-600 transition duration-200"

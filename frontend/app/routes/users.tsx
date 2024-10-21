@@ -18,6 +18,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     switch (actionType) {
         case 'add':
+            console.log("---- Dentro de add ----")
             const newUser = {
                 id: uuidv4(),
                 name: formData.get('name') as string,
