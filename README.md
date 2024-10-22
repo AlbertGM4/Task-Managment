@@ -1,96 +1,114 @@
-# Nyxidiom - Backend
-Este es el backend del proyecto Nyxidiom, desarrollado en Node.js usando Express y TypeScript. Se conecta a una base de datos MongoDB y expone endpoints para gestionar tareas y usuarios.
+# Nyxidiom - Gestión de Tareas
+Este proyecto es una aplicación de gestión de tareas, que incluye un frontend hecho con Remix y Tailwind, un backend hecho con Node.js y una base de datos MongoDB, todo desplegado en contenedores de Docker.
 
 ## Requisitos
-Antes de ejecutar el proyecto, asegúrate de tener instalados los siguientes requisitos:
+Antes de comenzar, asegúrate de tener instalados los siguientes programas en tu máquina:
 
-    · Node.js (versión 16 o superior)
-    · MongoDB (si no usas Docker para la base de datos)
-    · Docker (si decides contenerizar la base de datos o el backend)
-    · Git (para clonar el repositorio)
+    · Docker
+    · Docker-compose
+
+## Configuración del Proyecto
+El proyecto está dividido en tres servicios principales:
+
+    1. MongoDB: Base de datos para almacenar los datos de usuarios y tareas.
+    2. Backend: Aplicación Node.js que gestiona la lógica de negocio y sirve la API.
+    3. Frontend: Aplicación de cliente hecha con Remix para interactuar con el usuario.
+
+
+## Estructura del Proyecto
+La estructura básica del proyecto es la siguiente:
+    /backend               # Código del backend (Node.js y Express)
+    - controllers        # Controladores para usuarios y tareas
+    - routes             # Rutas de la API
+    - models             # Modelos de datos (Mongoose)
+    - Dockerfile         # Dockerfile para construir el backend
+    - .env               # Variables de entorno para el backend
+    /frontend              # Código del frontend (Remix)
+    - Dockerfile         # Dockerfile para construir el frontend
+    - .env               # Variables de entorno para el frontend
+    docker-compose.yml     # Definición de los servicios con Docker Compose
+
 
 ## Variables de Entorno
-Debes crear un archivo .env en la carpeta backend con las siguientes variables de entorno:
+Antes de iniciar los contenedores, asegúrate de configurar las variables de entorno en los archivos .env tanto para el backend como para el frontend (recomendado y utilizado en el desarrollo).
 
-    MONGO_URI=mongodb://<username>:<password>@<host>:<port>/<database>
-    PORT=5000
+    · Backend (backend/.env):
 
-    · MONGO_URI: La URI de conexión a tu base de datos MongoDB.
-    · PORT: El puerto en el que el backend va a estar corriendo (por defecto 5000).
+        PORT="5000"
+        MONGO_URI="mongodb://mongodb:27017"
 
+    · Frontend (frontend/.env):
 
-## Instalación y Ejecución Local
-1. Clona el repositorio:
-
-    · git clone <url-del-repositorio>
-    · cd backend
-
-2. Instala las dependencias de Node.js:
-
-    · npm install
-
-3. Compila el proyecto TypeScript:
-
-    · npm run build
-
-4. Ejecuta el proyecto:
-
-    · npm start
-
-El servidor backend debería estar corriendo en http://localhost:5000.
+        API_URL="http://backend:5000"
 
 
-## Usar MongoDB con Docker (opcional)
-Si prefieres ejecutar MongoDB en un contenedor Docker, sigue estos pasos:
+## Instrucciones para Levantar el Proyecto
 
-1. Asegúrate de tener Docker instalado.
+1. Clonar el Repositorio:
 
-2. Crea un archivo docker-compose.yml en la raíz del proyecto (ya debe estar creado si sigues la estructura recomendada).
+    · git clone https://github.com/tu-usuario/tu-repositorio.git
+    · cd tu-repositorio
 
-3. Ejecuta el siguiente comando para levantar MongoDB en Docker:
+2. Construir y Levantar los Servicios:
 
-    · docker-compose up -d mongo
-
-    Esto iniciará un contenedor con una instancia de MongoDB corriendo en el puerto 27017 por defecto.
-
-4. Actualiza tu archivo .env con la conexión a la base de datos MongoDB que corre en Docker:
-
-    · MONGO_URI=mongodb://localhost:27017/<database_name>
-
-5. Sigue los pasos anteriores para ejecutar el backend (npm install, npm run build, npm start).
+    · docker-compose up --build -d
 
 
-## Dockerización del Backend (opcional)
-Si quieres ejecutar el backend en Docker, debes tener un Dockerfile en la carpeta backend. Aquí tienes las instrucciones para contenerizar y ejecutar el backend:
+Este comando hará lo siguiente:
 
-1. Construye la imagen de Docker:
+    · Construirá las imágenes de Docker tanto para el frontend como para el backend.
+    · Levantará los contenedores para MongoDB, el backend y el frontend.
+    · El parámetro -d asegura que los contenedores se ejecuten en segundo plano.
 
-    · docker build -t nyxidiom-backend .
 
-2. Ejecuta el contenedor:
+## Verificar los Servicios
+Puedes verificar que todos los contenedores están corriendo con el siguiente comando:
 
-    · docker run -p 5000:5000 --env-file .env nyxidiom-backend
+    · docker ps
 
-El servidor estará disponible en http://localhost:5000.
+Debes ver tres contenedores en ejecución: mongodb, backend, y frontend.
+
+## Acceder a la Aplicación
+Una vez que los contenedores estén en funcionamiento, puedes acceder a la aplicación:
+
+    · Frontend: Visita http://localhost:3000 en tu navegador.
+    · ackend API: La API está disponible en http://localhost:5000.
+
+
+## Detener los Contenedores
+Si necesitas detener los contenedores, puedes usar el siguiente comando:
+
+    · docker-compose down
+
+Este comando detendrá y eliminará todos los contenedores, redes y volúmenes definidos en docker-compose.yml.
 
 
 ## Comandos Útiles
-· Instalar dependencias: npm install
-· Compilar TypeScript: npm run build
-· Ejecutar en modo desarrollo: npm run dev
-· Ejecutar en producción: npm start
 
-## Rutas de la API
-Las siguientes son las rutas expuestas por el backend:
+· Levantar los contenedores:
 
-    · GET /api/tasks: Obtiene todas las tareas.
-    · POST /api/tasks: Crea una nueva tarea.
-    · PUT /api/tasks/:id: Actualiza una tarea por su ID.
-    · DELETE /api/tasks/:id: Elimina una tarea por su ID.
+    docker-compose up -d
+
+· Levantar los contenedores y reconstruir las imágenes:
+
+    docker-compose up --build -d
+
+· Ver logs de los servicios:
+
+    docker-compose logs
+
+· Ver logs de un servicio específico (por ejemplo, el backend):
+
+    docker-compose logs backend
+
+· Detener los contenedores:
+
+    docker-compose down
 
 
-## Notas Finales
-Asegúrate de tener tu base de datos MongoDB corriendo antes de ejecutar el backend.
-Puedes optar por ejecutar MongoDB en un contenedor Docker o conectarte a una instancia local o remota.
-Si necesitas modificar el backend, recuerda compilar los archivos de TypeScript antes de ejecutar el servidor.
+## Notas Adicionales
+Si deseas restablecer la base de datos de MongoDB (eliminar todos los datos), puedes eliminar el volumen de Docker que almacena los datos persistentes:
 
+    · docker volume rm tu-repositorio_mongo-data
+
+Esto eliminará todos los datos almacenados en MongoDB, y el contenedor los recreará en su próximo inicio.
