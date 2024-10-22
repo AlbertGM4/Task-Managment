@@ -1,4 +1,4 @@
-/* (Backend entry point) – Este archivo conecta MongoDB y arranca el servidor Express */
+/* (Backend entry point) – Conecta MongoDB y arranca el servidor Express */
 
 import express from 'express';
 import mongoose from 'mongoose';
@@ -7,6 +7,7 @@ import cors from 'cors';
 import taskRoutes from './routes/taskRoutes';
 import userRoutes from './routes/userRoutes';
 
+
 // Cargar variables de entorno desde .env
 dotenv.config();
 
@@ -14,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.json());  // Permitir que Express procese JSON
+app.use(express.json());
 
 // Rutas
 app.use('', taskRoutes);

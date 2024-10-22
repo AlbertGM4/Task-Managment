@@ -1,4 +1,4 @@
-/* Crear la ruta para los usuarios */
+/* Ruta para los usuarios */
 
 import { Router } from 'express';
 import {

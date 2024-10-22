@@ -1,4 +1,4 @@
-/* para manejar las operaciones CRUD sobre las tareas */
+/* Op. CRUD sobre los usuarios */
 
 import { Request, Response } from 'express';
 import { User } from '../models/user';

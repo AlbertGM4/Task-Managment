@@ -1,4 +1,4 @@
-/* para manejar las operaciones CRUD sobre las tareas */
+/* Op. CRUD sobre las tareas */
 
 import { Request, Response } from 'express';
 import Task from '../models/taskModel';
@@ -47,7 +47,7 @@ export const updateTask = async (req: Request, res: Response) => {
       taskData,
       { new: true }
     );
-    
+
     if (updatedTask) {
       res.json(updatedTask);
     } else {

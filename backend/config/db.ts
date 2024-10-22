@@ -1,9 +1,9 @@
-/* lógica de conexión a la base de datos. */
+/* Lógica conexión a BD. */
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
-// Cargar las variables de entorno
+// Cargar variables de entorno
 dotenv.config();
 
 const connectDB = async () => {

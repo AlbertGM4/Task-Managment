@@ -70,7 +70,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
     const handleNewTaskChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         console.log("Name / value: ", name, value)
-        // Si el select es múltiple
+
         if (name === 'subtasks[]') {
             const selectElement = e.target as HTMLSelectElement;
             const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.value);
@@ -79,7 +79,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
                 subtasks: selectedOptions,
             }));
         } else {
-            // Maneja otros campos
             setNewTask(prevTask => ({
                 ...prevTask,
                 [name]: value === '' ? null : value
@@ -329,7 +328,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
                                     />
                                     <ul className="list-none p-0">
                                         {tasks
-                                            .filter((subtask) => subtask.id !== task.id) // Excluye la tarea actual
+                                            .filter((subtask) => subtask.id !== task.id)
                                             .map((subtask) => (
                                                 <li
                                                     key={subtask.id}

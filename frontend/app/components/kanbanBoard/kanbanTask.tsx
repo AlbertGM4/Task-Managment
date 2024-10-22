@@ -12,7 +12,6 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
     const taskRef = useRef<HTMLDivElement | null>(null);
 
 
-    // Maneja el clic fuera del área de la tarea
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (taskRef.current && !taskRef.current.contains(event.target as Node)) {
@@ -21,10 +20,8 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
             }
         };
 
-        // Agregar el event listener al montar el componente
         document.addEventListener('mousedown', handleClickOutside);
 
-        // Limpiar el event listener al desmontar
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };

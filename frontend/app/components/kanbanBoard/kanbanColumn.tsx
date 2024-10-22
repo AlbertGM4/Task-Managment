@@ -35,10 +35,8 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
             }
         };
 
-        // Agregar el event listener al montar el componente
         document.addEventListener('mousedown', handleClickOutside);
 
-        // Limpiar el event listener al desmontar
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };

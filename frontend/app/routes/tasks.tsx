@@ -9,7 +9,6 @@ import { json, redirect, ActionFunction } from '@remix-run/node';
 import { getTasks, createTask, updateTask, deleteTask, useAddSubtask } from '~/services/taskService';
 
 
-// Loader que se ejecuta en el servidor para obtener las tareas
 export const loader = async () => {
     const tasks = await getTasks();
     const users = await getUsers();

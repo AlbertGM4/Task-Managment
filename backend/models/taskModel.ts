@@ -15,7 +15,6 @@ export enum TaskPriority {
   HIGH = 'High',
 }
 
-// Define la interfaz para la tarea
 export interface ITask extends Document {
   _id: string;
   title: string;

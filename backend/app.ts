@@ -1,8 +1,8 @@
-/* Archivo para configurar middlewares adicionales de Express (puede mantenerse vacío por ahora) */
+/* Configurar middlewares de Express (u otros) */
+
 
 import express from 'express';
 const app = express();
 
-// Configuración adicional (por ejemplo, middlewares) aquí
 
 export default app;

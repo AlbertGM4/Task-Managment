@@ -77,5 +77,5 @@ const useDeleteTask = () => {
   return { removeTask };
 };
 
-export { useTasks, useUpdateTask, useAddTask, useDeleteTask };
+export { useTasks, useUpdateTask, useAddSubtask, useAddTask, useDeleteTask };
 
