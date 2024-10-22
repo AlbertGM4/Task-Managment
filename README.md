@@ -17,16 +17,17 @@ El proyecto está dividido en tres servicios principales:
 
 ## Estructura del Proyecto
 La estructura básica del proyecto es la siguiente:
-    /backend               # Código del backend (Node.js y Express)
+    
+    /backend             # Código del backend (Node.js y Express)
     - controllers        # Controladores para usuarios y tareas
     - routes             # Rutas de la API
     - models             # Modelos de datos (Mongoose)
     - Dockerfile         # Dockerfile para construir el backend
     - .env               # Variables de entorno para el backend
-    /frontend              # Código del frontend (Remix)
+    /frontend            # Código del frontend (Remix)
     - Dockerfile         # Dockerfile para construir el frontend
     - .env               # Variables de entorno para el frontend
-    docker-compose.yml     # Definición de los servicios con Docker Compose
+    docker-compose.yml   # Definición de los servicios con Docker Compose
 
 
 ## Variables de Entorno
