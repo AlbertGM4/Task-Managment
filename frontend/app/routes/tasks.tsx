@@ -36,11 +36,8 @@ export const action: ActionFunction = async ({ request }) => {
             return redirect('/tasks');
 
         case 'addSubtask':
-            console.log("---- En action ----")
             const taskId = formData.get('taskId') as string;
             const subtaskId = formData.get('subtaskId') as string;
-            console.log(taskId)
-            console.log(subtaskId)
             await useAddSubtask(taskId, subtaskId);
 
             return redirect('/tasks');

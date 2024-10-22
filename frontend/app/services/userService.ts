@@ -12,11 +12,18 @@ if (!apiUrl) {
 export async function getUsers(): Promise<User[]> {
     console.log("---- Obteniendo usuarios ----");
     try {
-        const response = await fetch(`${apiUrl}/users`);
+        const response = await fetch(`${apiUrl}/getUsers`);
         if (!response.ok) {
             throw new Error('Error al obtener los usuarios');
         }
-        const users: User[] = await response.json();
+        const usersFromBackend = await response.json();
+        const users: User[] = usersFromBackend.map((user: any) => ({
+            id: user._id,
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+        }));
+
         return users;
     } catch (error) {
         console.error("Error en getUsers:", error);
@@ -27,9 +34,8 @@ export async function getUsers(): Promise<User[]> {
 // Crear un nuevo usuario en el servidor
 export async function createUser(newUser: User): Promise<User> {
     console.log("---- Creando Usuario ----");
-    console.log("New user: ", newUser)
     try {
-        const response = await fetch(`${apiUrl}/users`, {
+        const response = await fetch(`${apiUrl}/createUser`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,7 +60,7 @@ export async function updateUser(userToUpdate: User): Promise<User> {
     console.log("---- Actualizando Usuario ----");
     try {
         const userId = userToUpdate.id;
-        const response = await fetch(`${apiUrl}/users/${userId}`, {
+        const response = await fetch(`${apiUrl}/updateUser/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,7 +84,7 @@ export async function updateUser(userToUpdate: User): Promise<User> {
 export async function deleteUser(userId: string): Promise<void> {
     console.log("---- Eliminando Usuario ----");
     try {
-        const response = await fetch(`${apiUrl}/users/${userId}`, {
+        const response = await fetch(`${apiUrl}/deleteUser/${userId}`, {
             method: 'DELETE',
         });
 

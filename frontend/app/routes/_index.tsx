@@ -3,14 +3,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { getUsers } from '~/services/userService';
 import { useLoaderData, useFetcher } from '@remix-run/react';
 import KanbanBoard from '~/components/kanbanBoard/kanbanBoard';
-import { Task, TaskPriority, TaskStatus } from '~/models/task';
+import { Task } from '~/models/task';
 import { ActionFunction, json, redirect } from '@remix-run/node';
 import { createTask, deleteTask, getTasks, updateTask } from '~/services/taskService';
 
 
 export const loader = async () => {
-  const tasks = await getTasks();
   const users = await getUsers();
+  const tasks = await getTasks();
+
   return json({ tasks, users });
 };
 

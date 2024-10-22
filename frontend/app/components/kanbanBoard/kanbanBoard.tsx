@@ -94,8 +94,6 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, users, fetcher }) => 
     };
 
     const handleUpdateTask = async (taskToUpdate: Task) => {
-        console.log("Updating task:", taskToUpdate);
-
         // Optimistic Update: actualizar el estado localmente antes de enviar al backend
         const updateState = (task: Task) => {
             setColumns(prev => ({
@@ -116,7 +114,6 @@ const KanbanBoard : React.FC<KanbanBoardProps> = ({ tasks, users, fetcher }) => 
     };
 
     const handleDeleteTask = async (taskId: string) => {
-        console.log("Deleting task:", taskId);
         fetcher.submit({
             action: 'delete',
             id: taskId

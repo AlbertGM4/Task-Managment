@@ -72,10 +72,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
 
         // Si el select es múltiple
         if (name === 'subtasks[]') {
-            console.log("Dentro de onchange")
             const selectElement = e.target as HTMLSelectElement;
             const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.value);
-            console.log("Opciones: ", selectedOptions)
             setNewTask(prevTask => ({
                 ...prevTask,
                 subtasks: selectedOptions,

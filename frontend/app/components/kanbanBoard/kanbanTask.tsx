@@ -14,7 +14,6 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
 
     // Maneja el clic fuera del área de la tarea
     useEffect(() => {
-        console.log("subtasks: ", subtasks)
         const handleClickOutside = (event: MouseEvent) => {
             if (taskRef.current && !taskRef.current.contains(event.target as Node)) {
                 setIsEditing(false);
@@ -38,7 +37,7 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
 
     const handleUser = (userId: string | null) => {
         const user = users.find(user => user.id === userId);
-        return user ? `${user.name} ${user.surname}` : "Sin asignar";
+        return user ? `${user.name}` : "Sin asignar";
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -146,10 +145,10 @@ const KanbanTask: React.FC<KanbanTaskProps> = ({ task, subtasks, users, index, h
                                 onChange={handleInputChange}
                                 className="w-full p-2 mb-2 border rounded"
                             >
-                                <option value="" disabled>Seleccionar Usuario</option>
-                                {users.map((user) => (
-                                    <option key={user.id} value={user.id}>{user.name}</option>
-                                ))}
+                                <option value="">Seleccionar Usuario</option>
+                                {users.map((user) => {
+                                    return <option key={user.id} value={user.id}>{user.name}</option>;
+                                    })}
                             </select>
                             <select
                                 name="priority"

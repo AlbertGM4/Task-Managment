@@ -2,7 +2,6 @@
 
 import { Request, Response } from 'express';
 import Task from '../models/taskModel';
-import { User } from '../models/user';
 
 // Obtener todas las tareas
 export const getTasks = async (req: Request, res: Response) => {
@@ -22,7 +21,6 @@ export const createTask = async (req: Request, res: Response) => {
     id, title, description,
     subtasks, status, priority, user
   } = req.body;
-  console.log("Sub: ", subtasks)
   const task = new Task(
                 { _id: id,
                   title, description, subtasks,
@@ -42,7 +40,6 @@ export const updateTask = async (req: Request, res: Response) => {
   console.log("---- Dentro back updateTask ----\n")
   const { id, ...taskData } = req.body;
   const _id = id;
-  console.log("Esta es la atsk Data: ", taskData)
 
   try {
     const updatedTask = await Task.findByIdAndUpdate(
@@ -50,8 +47,7 @@ export const updateTask = async (req: Request, res: Response) => {
       taskData,
       { new: true }
     );
-    console.log("UPDATED: ", updateTask)
-
+    
     if (updatedTask) {
       res.json(updatedTask);
     } else {

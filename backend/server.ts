@@ -4,7 +4,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import taskRoutes from './routes/taskRoutes';  // Ruta de ejemplo para las tareas
+import taskRoutes from './routes/taskRoutes';
+import userRoutes from './routes/userRoutes';
 
 // Cargar variables de entorno desde .env
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());  // Permitir que Express procese JSON
 
 // Rutas
 app.use('', taskRoutes);
+app.use('', userRoutes);
 
 // Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI as string)

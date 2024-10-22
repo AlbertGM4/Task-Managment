@@ -1,4 +1,4 @@
-/* Crear la ruta para las tareas */
+/* Crear la ruta para los usuarios */
 
 import { Router } from 'express';
 import {
@@ -11,10 +11,10 @@ import {
 
 const router = Router();
 
-// Rutas para las tareas
-router.get('/', getUsers);                // Obtener todos los usuarios
-router.post('/', createUser);             // Crear una nueva tarea
-router.put('/:id', updateUser);           // Actualizar una tarea
-router.delete('/:id', deleteUser);        // Eliminar una tarea
+// Rutas para los usuarios
+router.get('/getUsers', getUsers);                  // Obtener todos los usuarios
+router.post('/createUser', createUser);             // Crear un nuevo usuario
+router.put('/updateUser/:id', updateUser);          // Actualizar un usuario
+router.delete('/deleteUser/:id', deleteUser);       // Eliminar un usuario
 
 export default router;

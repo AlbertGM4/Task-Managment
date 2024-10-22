@@ -26,7 +26,6 @@ export async function getTasks(): Promise<Task[]> {
             subtasks: task.subtasks,
             priority: task.priority
         }));
-        console.log("Tareas obtenidas desde el servicio:", tasks);
         return tasks;
     } catch (error) {
         console.error("Error en getTasks:", error);
@@ -45,7 +44,6 @@ export async function createTask(newTask: Task): Promise<Task> {
             },
             body: JSON.stringify(newTask),
         });
-        console.log("Respuesta crear back: ", response);
 
         if (!response.ok) {
             throw new Error(`Error al crear la tarea: ${response.statusText}`);
@@ -101,7 +99,6 @@ export async function updateTask(taskToUpdate: Task): Promise<Task | null> {
         }
 
         const updatedTask: Task = await response.json();
-        console.log("Tarea actualizada:", updatedTask);
         return updatedTask;
     } catch (error) {
         console.error("Error en updateTaskStatus:", error);
