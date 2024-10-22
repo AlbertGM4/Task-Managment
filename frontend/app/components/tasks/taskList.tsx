@@ -69,7 +69,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
     // Register new task changes
     const handleNewTaskChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-
+        console.log("Name / value: ", name, value)
         // Si el select es múltiple
         if (name === 'subtasks[]') {
             const selectElement = e.target as HTMLSelectElement;
@@ -86,6 +86,11 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
             }));
         }
     };
+
+    const handleUser = (userId: string | null) => {
+        const user = users.find(user => user.id === userId);
+        return user ? `${user.name}` : "Sin asignar";
+    }
 
     // Clean new task
     const resetNewTask = () => {
@@ -246,11 +251,9 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
                                 value={newTask.user ?? ""} onChange={handleNewTaskChange}
                                 className="border rounded p-2"
                             >
-                                <option key="none" value="none">
-                                    <p>Sin usuario</p>
-                                </option>
-                                {users?.map((user) => (
-                                    <option key={user.id} value={user.name}>
+                                <option key="" value=""><p>Sin usuario</p></option>
+                                {users.map((user) => (
+                                    <option key={user.id} value={user.id}>
                                         {user.name}
                                     </option>
                                 ))}
@@ -301,7 +304,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
                                 </div>
                                 <p className="font-semibold">Status: </p><span>{task.status}</span>
                                 <p className="font-semibold">Priority: </p><span>{task.priority}</span>
-                                <p className="font-semibold">User: </p><span>{task.user}</span>
+                                <p className="font-semibold">User: </p><span>{handleUser(task.user)}</span>
                             </div>
 
                             {/* Mostrar el formulario de edición solo si es la tarea seleccionada */}
@@ -387,11 +390,9 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, users, fetcher }: TaskListPr
                                             onChange={handleNewTaskChange}
                                             className="border rounded p-2"
                                         >
-                                            <option key="none" value="none">
-                                                <p>Sin usuario</p>
-                                            </option>
-                                            {users?.map((user) => (
-                                                <option key={user.id} value={user.name}>
+                                            <option value=""><p>Sin usuario</p></option>
+                                            {users.map((user) => (
+                                                <option key={user.id} value={user.id}>
                                                     {user.name}
                                                 </option>
                                             ))}

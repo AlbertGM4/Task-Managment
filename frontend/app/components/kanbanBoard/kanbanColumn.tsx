@@ -54,6 +54,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
         selectedSubtasks.forEach(subtaskId => {
             newTask.subtasks.push(subtaskId);
         });
+        newTask.status = column.id
         handleAddTask(newTask);
         setNewTask({
             id: '',
@@ -99,7 +100,6 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
                     ))}
                     <button
                         onClick={() => {
-                            console.log("Cambiando estado a agregar tarea");
                             setIsAddingTask(true);
                         }}
                         className="mt-4 w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition duration-200"
@@ -147,42 +147,41 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ column, users, handleAddTas
                                 </ul>
                             </div>
                             <div className="flex justify-between">
-                                <select
-                                    id="addTaskStatus" name="status"
-                                    defaultValue={newTask.status} onChange={handleInputChange}
-                                    className="border rounded p-2 mr-2"
-                                >
-                                    {Object.values(TaskStatus).map((status) => (
-                                        <option key={status} value={status}>
-                                            {status}
+                                <ul>
+                                    <li><h4>Status</h4></li>
+                                    <li>
+                                        <select
+                                        id="addTaskPriority" name="priority"
+                                        defaultValue={newTask.priority} onChange={handleInputChange}
+                                        className="border rounded p-2"
+                                    >
+                                        {Object.values(TaskPriority).map((status) => (
+                                            <option key={status} value={status}>
+                                                {status}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    </li>
+                                </ul>
+                                <ul>
+                                    <li><h4>Selecciona Usuario</h4></li>
+                                    <li>
+                                    <select
+                                        id="addTaskUser" name="user"
+                                        value={newTask.user ?? ""} onChange={handleInputChange}
+                                        className="border rounded p-2"
+                                    >
+                                        <option key="none" value="none">
+                                            <p>Sin usuario</p>
                                         </option>
-                                    ))}
-                                </select>
-                                <select
-                                    id="addTaskPriority" name="priority"
-                                    defaultValue={newTask.priority} onChange={handleInputChange}
-                                    className="border rounded p-2"
-                                >
-                                    {Object.values(TaskPriority).map((status) => (
-                                        <option key={status} value={status}>
-                                            {status}
-                                        </option>
-                                    ))}
-                                </select>
-                                <select
-                                    id="addTaskUser" name="user"
-                                    value={newTask.user ?? ""} onChange={handleInputChange}
-                                    className="border rounded p-2"
-                                >
-                                    <option key="none" value="none">
-                                        <p>Sin usuario</p>
-                                    </option>
-                                    {users.map((user) => (
-                                        <option key={user.id} value={user.name}>
-                                            {user.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                        {users.map((user) => (
+                                            <option key={user.id} value={user.id}>
+                                                {user.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    </li>
+                                </ul>
                             </div>
                             <button
                                 type="submit"
