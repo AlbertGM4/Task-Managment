@@ -15,9 +15,6 @@ pids
 dist/
 build/
 
-# Environment
-.env
-
 # Docker
 *.env.local
 docker-compose.override.yml
