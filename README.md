@@ -1,4 +1,4 @@
-# Nyxidiom - Gestión de Tareas
+# Gestión de Tareas
 Este proyecto es una aplicación de gestión de tareas, que incluye un frontend hecho con Remix y Tailwind, un backend hecho con Node.js y una base de datos MongoDB, todo desplegado en contenedores de Docker.
 
 ## Requisitos
